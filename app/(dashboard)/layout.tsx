@@ -7,7 +7,7 @@ import { Cairo } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { cookies } from "next/headers";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/Navbar";
 // استدعاء خط كايرو

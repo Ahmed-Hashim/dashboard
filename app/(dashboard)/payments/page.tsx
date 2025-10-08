@@ -1,124 +1,136 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Tables } from "@/types/database";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCaption,
-} from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import React, { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { supabase } from "@/lib/supabaseClient";
 
-type PurchaseWithCourse = Tables<"purchases"> & { course: Tables<"courses"> };
+import { paymentsColumns } from "./columns";
+import GenericTable from "@/components/GenericTable";
+import { AddPaymentDialog } from "@/components/Payments/AddPaymentDialog"
+
+type PurchaseWithDetails = {
+  id: string;
+  user_id: string;
+  course_id: number;
+  amount: number;
+  currency: string | null;
+  status: string;
+  purchased_at: string;
+  invoice_url: string | null;
+  payment_id: string | null;
+  course_title: string | null;
+  user_email: string | null;
+};
 
 export default function PaymentsPage() {
-  const [purchases, setPurchases] = useState<PurchaseWithCourse[]>([]);
+  const [purchases, setPurchases] = useState<PurchaseWithDetails[]>([]);
+  const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetchPurchases();
+  const fetchPurchases = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      let baseQuery = supabase
+        .from("purchases_with_users")
+        .select("*")
+        .order("purchased_at", { ascending: false });
+
+      if (statusFilter && statusFilter !== "all") {
+        baseQuery = baseQuery.eq("status", statusFilter);
+      }
+
+      let { data } = await baseQuery;
+
+      if (search.trim() && data) {
+        const term = search.trim().toLowerCase();
+        data = data.filter(
+          (item) =>
+            item.user_email?.toLowerCase().includes(term) ||
+            item.id?.toLowerCase().includes(term)
+        );
+      }
+
+      setPurchases(data || []);
+    } catch (err) {
+      console.error("Error fetching purchases:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [statusFilter, search]);
 
-  const fetchPurchases = async () => {
-    let query = supabase
-      .from("purchases")
-      .select(`*, course:course_id(*)`)
-      .order("purchased_at", { ascending: false });
-
-    if (statusFilter) query = query.eq("status", statusFilter);
-    if (search) query = query.ilike("id", `%${search}%`);
-
-    const { data, error } = await query;
-
-    if (error) console.error(error);
-    else setPurchases(data as PurchaseWithCourse[]);
-  };
-
-  const getStatusBadge = (status: string | null) => {
-    switch (status) {
-      case "paid":
-        return <Badge variant="success">مدفوع</Badge>;
-      case "pending":
-        return <Badge variant="warning">قيد الانتظار</Badge>;
-      case "cancelled":
-        return <Badge variant="destructive">ملغى</Badge>;
-      default:
-        return <Badge variant="secondary">غير محدد</Badge>;
-    }
-  };
+  useEffect(() => {
+    fetchPurchases();
+  }, [fetchPurchases]);
 
   return (
     <div className="p-6 space-y-6">
+      {/* 🔍 Search, Filters, and Actions */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <Input
-          placeholder="ابحث برقم الدفع"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
-        <Select onValueChange={(value) => setStatusFilter(value || null)}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="فلترة حسب الحالة" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">الكل</SelectItem>
-            <SelectItem value="paid">مدفوع</SelectItem>
-            <SelectItem value="pending">قيد الانتظار</SelectItem>
-            <SelectItem value="cancelled">ملغى</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* حقول البحث والفلترة */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 flex-grow">
+          <Input
+            placeholder="ابحث برقم الدفع أو بريد المستخدم"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-sm"
+          />
+          <Select
+            onValueChange={(value) =>
+              setStatusFilter(value === "all" ? null : value)
+            }
+          >
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="فلترة حسب الحالة" />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
+              <SelectItem
+                value="all"
+                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                الكل
+              </SelectItem>
+              <SelectItem
+                value="succeeded"
+                className="cursor-pointer hover:bg-green-100 dark:hover:bg-green-900 transition-colors"
+              >
+                ناجحة
+              </SelectItem>
+              <SelectItem
+                value="pending"
+                className="cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900 transition-colors"
+              >
+                قيد الانتظار
+              </SelectItem>
+              <SelectItem
+                value="failed"
+                className="cursor-pointer hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+              >
+                فشلت
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* زر إضافة دفعة جديدة */}
+        <AddPaymentDialog onPaymentAdded={fetchPurchases} />
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>رقم الدفع</TableHead>
-            <TableHead>الدورة</TableHead>
-            <TableHead>المبلغ</TableHead>
-            <TableHead>العملة</TableHead>
-            <TableHead>تاريخ الشراء</TableHead>
-            <TableHead>الحالة</TableHead>
-            <TableHead>الفاتورة</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {purchases.map((purchase) => (
-            <TableRow key={purchase.id}>
-              <TableCell>{purchase.id}</TableCell>
-              <TableCell>{purchase.course?.title || "-"}</TableCell>
-              <TableCell>{purchase.amount}</TableCell>
-              <TableCell>{purchase.currency || "EGP"}</TableCell>
-              <TableCell>{purchase.purchased_at ? new Date(purchase.purchased_at).toLocaleDateString() : "-"}</TableCell>
-              <TableCell>{getStatusBadge(purchase.status)}</TableCell>
-              <TableCell>
-                {purchase.invoice_url ? (
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                  >
-                    <a href={purchase.invoice_url} target="_blank">عرض الفاتورة</a>
-                  </Button>
-                ) : (
-                  "-"
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {purchases.length === 0 && (
-        <div className="text-center text-gray-500 py-10">لا توجد مدفوعات</div>
-      )}
+      {/* 🧾 Table */}
+      <GenericTable
+        columns={paymentsColumns}
+        data={purchases}
+        loading={loading}
+        emptyMessage="لا توجد مدفوعات تطابق معايير البحث."
+      />
     </div>
   );
 }

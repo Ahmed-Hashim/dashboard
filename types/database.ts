@@ -205,22 +205,25 @@ export type Database = {
       }
       enrollments: {
         Row: {
-          course_id: number | null
+          course_id: number
           enrolled_at: string | null
           id: string
-          user_id: string | null
+          purchase_id: string | null
+          user_id: string
         }
         Insert: {
-          course_id?: number | null
+          course_id: number
           enrolled_at?: string | null
           id?: string
-          user_id?: string | null
+          purchase_id?: string | null
+          user_id: string
         }
         Update: {
-          course_id?: number | null
+          course_id?: number
           enrolled_at?: string | null
           id?: string
-          user_id?: string | null
+          purchase_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -228,6 +231,20 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollments_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "purchases_with_users"
             referencedColumns: ["id"]
           },
         ]
@@ -267,8 +284,8 @@ export type Database = {
           id: string
           invoice_url: string | null
           payment_id: string | null
-          purchased_at: string | null
-          status: string | null
+          purchased_at: string
+          status: Database["public"]["Enums"]["purchase_status"]
           user_id: string
         }
         Insert: {
@@ -278,8 +295,8 @@ export type Database = {
           id?: string
           invoice_url?: string | null
           payment_id?: string | null
-          purchased_at?: string | null
-          status?: string | null
+          purchased_at?: string
+          status: Database["public"]["Enums"]["purchase_status"]
           user_id: string
         }
         Update: {
@@ -289,8 +306,8 @@ export type Database = {
           id?: string
           invoice_url?: string | null
           payment_id?: string | null
-          purchased_at?: string | null
-          status?: string | null
+          purchased_at?: string
+          status?: Database["public"]["Enums"]["purchase_status"]
           user_id?: string
         }
         Relationships: [
@@ -380,6 +397,7 @@ export type Database = {
       }
       support_messages: {
         Row: {
+          admin_reply: string | null
           created_at: string | null
           email: string | null
           id: string
@@ -390,6 +408,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          admin_reply?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -400,6 +419,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          admin_reply?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
@@ -454,7 +474,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      purchases_with_users: {
+        Row: {
+          amount: number | null
+          course_id: number | null
+          course_title: string | null
+          currency: string | null
+          id: string | null
+          invoice_url: string | null
+          payment_id: string | null
+          purchased_at: string | null
+          status: Database["public"]["Enums"]["purchase_status"] | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_course_views: {
@@ -484,7 +527,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      purchase_status: "pending" | "succeeded" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -614,6 +657,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      purchase_status: ["pending", "succeeded", "failed"],
+    },
   },
 } as const

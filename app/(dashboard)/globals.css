@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*===============================
+=       Fonts Configuration     =
+===============================*/
+@font-face {
+  font-family: "MyFont";
+  src: url("/font/SomarRounded-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "MyFont";
+  src: url("/font/SomarRounded-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/*===============================
+=       Dark Mode Variant       =
+===============================*/
+@custom-variant dark (&:is(.dark *));
+
+/*===============================
+=         Base Body Styles      =
+===============================*/
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "MyFont", sans-serif;
+}
+
+/*===============================
+=        Theme Inline Vars      =
+===============================*/
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-md: var(--radius);
+}
+
+/*===============================
+=         Light Theme Vars      =
+===============================*/
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+
+  /* ✅ Success & Warning Colors */
+  --success: oklch(0.75 0.13 140); /* أخضر متوازن */
+  --success-foreground: oklch(0.14 0.005 285.823);
+  --warning: oklch(0.88 0.14 90); /* أصفر دافئ */
+  --warning-foreground: oklch(0.25 0.02 285.823);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  --border: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+}
+
+/*===============================
+=         Dark Theme Vars       =
+===============================*/
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  /* ✅ Dark versions for Success & Warning */
+  --success: oklch(0.58 0.13 140);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.68 0.14 90);
+  --warning-foreground: oklch(0.985 0 0);
+
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --ring: oklch(0.552 0.016 285.938);
+}
+
+/*===============================
+=           Base Layer          =
+===============================*/
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

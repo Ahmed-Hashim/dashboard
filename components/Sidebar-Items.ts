@@ -45,13 +45,5 @@ export const items = [
     url: "/support",
     icon: LifeBuoy,
   },
-  {
-    title: "الإعدادات",
-    url: "/settings",
-    icon: Settings,
-  },
-];
-export const dropdownItems = [
-  { title: "الحساب", url: "/dashboard/account", type: "link" },
-  { title: "تسجيل الخروج", url: "/logout", type: "form" },
+
 ];

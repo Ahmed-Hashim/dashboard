@@ -10,10 +10,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import {  items } from "./Sidebar-Items";
+import { items } from "./Sidebar-Items";
 
 // import {
 //   Collapsible,
@@ -28,14 +27,16 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
-            <Image src="/logo.svg" alt="logo" width={200} height={100} />
+            <div className="flex justify-center items-center">
+              <Image src="/logo.svg" alt="logo" width={120} height={100} />
+            </div>
           </SidebarGroupLabel>
           <div className="h-px bg-gray-700 my-4 w-full" />
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title} className="my-2">
-                  <SidebarMenuButton asChild className="text-xl">
+                  <SidebarMenuButton asChild>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -69,7 +70,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-     
     </Sidebar>
   );
 }
