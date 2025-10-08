@@ -17,12 +17,11 @@ import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { SidebarTrigger } from "./ui/sidebar";
 import { User as UserSupa } from "@supabase/supabase-js";
+import { signout } from "@/app/(auth)/login/actions";
+import Link from "next/link";
+import { Tables } from "@/types/database";
 
-interface Profile {
-  id: string;
-  full_name: string | null;
-  avatar_url: string | null;
-}
+export type Profile = Tables<"profiles">;
 
 const Navbar = ({ user }: { user: UserSupa }) => {
   const { setTheme } = useTheme();
@@ -35,7 +34,7 @@ const Navbar = ({ user }: { user: UserSupa }) => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, avatar_url")
+        .select("*")
         .eq("id", user.id)
         .single();
 
@@ -103,10 +102,10 @@ const Navbar = ({ user }: { user: UserSupa }) => {
           <DropdownMenuTrigger>
             <Avatar>
               <AvatarImage
-                src={profile?.avatar_url || "https://via.placeholder.com/40"}
+                src={profile?.avatar_url || "/default-avatar.jpg"}
               />
               <AvatarFallback>
-                {profile?.full_name?.[0]?.toUpperCase() || "م"}
+                {profile?.name?.[0]?.toUpperCase() || "م"}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -117,21 +116,28 @@ const Navbar = ({ user }: { user: UserSupa }) => {
               className="z-[9999] bg-primary text-primary-foreground border-none shadow-lg rounded-xl"
             >
               <DropdownMenuLabel>
-                {profile?.full_name || "حسابي"}
+                {profile?.name || "حسابي"}
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-primary-foreground/30" />
 
               <DropdownMenuItem className="hover:bg-primary-foreground/10 cursor-pointer">
+                <Link href={"/profile"} className="flex items-center">
                 <User className="h-4 w-4 mr-2" />
                 الملف الشخصي
+                </Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem className="hover:bg-primary-foreground/10 cursor-pointer">
-                <Settings className="h-4 w-4 mr-2" />
-                الإعدادات
+                <Link href={"/"} className="flex items-center">
+                  <Settings className="h-4 w-4 mr-2" />
+                  الإعدادات
+                </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="hover:bg-primary-foreground/10 cursor-pointer">
+              <DropdownMenuItem
+                onClick={signout}
+                className="hover:bg-primary-foreground/10 cursor-pointer"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 تسجيل الخروج
               </DropdownMenuItem>

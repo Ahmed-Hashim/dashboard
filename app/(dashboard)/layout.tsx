@@ -2,24 +2,22 @@ import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
 import type { Metadata } from "next";
-import { Cairo } from "next/font/google";
+
 
 import { ThemeProvider } from "next-themes";
-import "./globals.css";
+import "../globals.css";
 import { cookies } from "next/headers";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/Navbar";
-// استدعاء خط كايرو
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  variable: "--font-cairo",
-  display: "swap",
-});
+
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Admin Dashboard",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default async function DashboardLayout({
@@ -37,7 +35,7 @@ export default async function DashboardLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className={`${cairo.variable} font-sans antialiased`}>
+      <body className={` font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
