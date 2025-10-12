@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
@@ -46,6 +47,7 @@ export default async function DashboardLayout({
             <main className="flex flex-col flex-1">
               <Navbar user={user}/>
               {children}
+              <Toaster richColors />
             </main>
           </SidebarProvider>
         </ThemeProvider>

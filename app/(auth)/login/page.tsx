@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // ✅ Import useEffect
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,23 @@ import { login } from "./actions";
 export default function LoginPage() {
   const { theme, setTheme } = useTheme();
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false); // ✅ State to track mount status
+
+  // ✅ Ensures this code runs only on the client, after the initial render
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ✅ Render a placeholder for the theme toggle button to prevent mismatch
+  if (!mounted) {
+    // Render a minimal version or a loader on the server and initial client render
+    // This prevents the theme-dependent part from causing a mismatch
+    return (
+       <div className="flex min-h-screen items-center justify-center bg-neutral-950">
+          <Loader2 className="h-8 w-8 animate-spin text-white" />
+       </div>
+    );
+  }
 
   return (
     <div
@@ -53,11 +70,11 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          {/* ✅ استخدم Server Action مباشرة */}
           <form
             action={async (formData) => {
               setLoading(true);
               await login(formData);
+              // Consider setting setLoading(false) in case of an error
             }}
             className="space-y-4"
           >

@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 
 import type { Metadata } from "next";
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: ReactNode;

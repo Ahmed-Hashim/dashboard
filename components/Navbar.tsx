@@ -35,7 +35,7 @@ const Navbar = ({ user }: { user: UserSupa }) => {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("user_id", user.id)
         .single();
 
       if (!error && data) setProfile(data);
@@ -61,37 +61,32 @@ const Navbar = ({ user }: { user: UserSupa }) => {
             </Button>
           </DropdownMenuTrigger>
 
-          {/* ✅ استخدام Portal لضمان الظهور فوق الكل */}
           <DropdownMenuPortal>
             <DropdownMenuContent
               align="end"
-              className="z-[9999] bg-primary text-primary-foreground border-none shadow-lg rounded-xl"
+              className="z-[9999] min-w-0 w-fit bg-primary text-primary-foreground border-none shadow-lg rounded-xl"
             >
-              <DropdownMenuLabel>المظهر</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-primary-foreground/30" />
+             
 
               <DropdownMenuItem
-                className="hover:bg-primary-foreground/10 cursor-pointer"
+                className="hover:bg-primary-foreground/10 cursor-pointer p-0 h-8 w-8 flex items-center justify-center"
                 onClick={() => setTheme("light")}
               >
-                <Sun className="h-4 w-4 mr-2" />
-                مظهر فاتح
+                <Sun className="h-4 w-4" />
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="hover:bg-primary-foreground/10 cursor-pointer"
+                className="hover:bg-primary-foreground/10 cursor-pointer p-0 h-8 w-8 flex items-center justify-center"
                 onClick={() => setTheme("dark")}
               >
-                <Moon className="h-4 w-4 mr-2" />
-                مظهر داكن
+                <Moon className="h-4 w-4" />
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="hover:bg-primary-foreground/10 cursor-pointer"
+                className="hover:bg-primary-foreground/10 cursor-pointer p-0 h-8 w-8 flex items-center justify-center"
                 onClick={() => setTheme("system")}
               >
-                <Monitor className="h-4 w-4 mr-2" />
-                حسب النظام
+                <Monitor className="h-4 w-4" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenuPortal>
@@ -101,9 +96,7 @@ const Navbar = ({ user }: { user: UserSupa }) => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
-              <AvatarImage
-                src={profile?.avatar_url || "/default-avatar.jpg"}
-              />
+              <AvatarImage src={profile?.avatar_url || "/default-avatar.jpg"} />
               <AvatarFallback>
                 {profile?.name?.[0]?.toUpperCase() || "م"}
               </AvatarFallback>
@@ -115,15 +108,15 @@ const Navbar = ({ user }: { user: UserSupa }) => {
               sideOffset={10}
               className="z-[9999] bg-primary text-primary-foreground border-none shadow-lg rounded-xl"
             >
-              <DropdownMenuLabel>
+              <DropdownMenuLabel className="flex items-center justify-center">
                 {profile?.name || "حسابي"}
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-primary-foreground/30" />
 
               <DropdownMenuItem className="hover:bg-primary-foreground/10 cursor-pointer">
                 <Link href={"/profile"} className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                الملف الشخصي
+                  <User className="h-4 w-4 mr-2" />
+                  الملف الشخصي
                 </Link>
               </DropdownMenuItem>
 
