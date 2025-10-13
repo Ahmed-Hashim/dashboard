@@ -7,7 +7,7 @@ import VideoLibraryCards from "./list/page";
 
 export default function ManageVideosPage() {
   const COURSE_ID = 1;
-  const [unassignedVideos, setUnassignedVideos] = useState<Video[]>([]);
+  const [, setUnassignedVideos] = useState<Video[]>([]);
  
   
 

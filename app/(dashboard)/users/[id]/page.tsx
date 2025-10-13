@@ -13,7 +13,7 @@ import Image from "next/image";
 
 type Profile = Tables<"profiles">;
 type Role = Tables<"roles">;
-type UserRole = Tables<"user_roles">;
+
 
 export default function UserDetailsPage({ params }: { params: { id: string } }) {
   const userId = params.id;

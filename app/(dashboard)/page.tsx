@@ -32,7 +32,7 @@ export default function DashboardPage() {
   });
   const [enrollmentData, setEnrollmentData] = useState<EnrollmentData[]>([]);
   const [videoData, setVideoData] = useState<VideoEngagementData[]>([]);
-  const [progressData, setProgressData] = useState<ProgressDistributionData[]>(
+  const [, setProgressData] = useState<ProgressDistributionData[]>(
     []
   );
   const [supportData, setSupportData] = useState<SupportMessagesData[]>([]);
@@ -87,7 +87,7 @@ export default function DashboardPage() {
         videosCount,
         usersCount,
         supportCount,
-        coursesData,
+        
         supportData,
       ] = await Promise.all([
         supabase.from("courses").select("*", { count: "exact", head: true }),
@@ -120,9 +120,9 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const handleSendMail = (email: string) => {
-    alert(`إرسال بريد إلى ${email} (وظيفة تجريبية)`);
-  };
+  // const handleSendMail = (email: string) => {
+  //   alert(`إرسال بريد إلى ${email} (وظيفة تجريبية)`);
+  // };
 
   if (loading)
     return (

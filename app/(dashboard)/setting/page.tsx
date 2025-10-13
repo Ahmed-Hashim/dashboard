@@ -1,25 +1,20 @@
 import { createClient } from "@/lib/server";
 import { Tables } from "@/types/database";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
   CardTitle,
-  CardDescription 
+  CardDescription,
 } from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { 
-  User, 
-  Mail, 
+import {
+  User,
+  Mail,
   Calendar,
   Shield,
   TrendingUp,
@@ -28,14 +23,9 @@ import {
   BookOpen,
   CheckCircle,
   Clock,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import { redirect } from "next/navigation";
-
-type Profile = Tables<"profiles">;
-type Purchase = Tables<"purchases">;
-type Enrollment = Tables<"enrollments">;
-type Course = Tables<"courses">;
 
 export default async function AdminProfilePage() {
   const supabase = await createClient();
@@ -55,11 +45,13 @@ export default async function AdminProfilePage() {
   // جلب بيانات الأدمن/السيلز
   const { data: userRoles } = await supabase
     .from("user_roles")
-    .select(`
+    .select(
+      `
       id,
       role_id,
       roles (name)
-    `)
+    `
+    )
     .eq("user_id", user.id)
     .single();
 
@@ -72,12 +64,12 @@ export default async function AdminProfilePage() {
   // جلب عدد المستخدمين المسجلين
   const { data: usersCount } = await supabase
     .from("profiles")
-    .select("id", { count: 'exact' });
+    .select("id", { count: "exact" });
 
   // جلب عدد الكورسات
   const { data: coursesCount } = await supabase
     .from("courses")
-    .select("id", { count: 'exact' });
+    .select("id", { count: "exact" });
 
   // جلب آخر المبيعات
   const { data: recentPurchases } = await supabase
@@ -87,7 +79,8 @@ export default async function AdminProfilePage() {
     .limit(5);
 
   // حساب الإحصائيات
-  const totalRevenue = salesStats?.reduce((sum, purchase) => sum + purchase.amount, 0) || 0;
+  const totalRevenue =
+    salesStats?.reduce((sum, purchase) => sum + purchase.amount, 0) || 0;
   const totalSales = salesStats?.length || 0;
   const totalUsers = usersCount?.length || 0;
   const totalCourses = coursesCount?.length || 0;
@@ -97,7 +90,9 @@ export default async function AdminProfilePage() {
       case "succeeded":
         return <Badge className="bg-green-100 text-green-800">ناجح</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">قيد الانتظار</Badge>;
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800">قيد الانتظار</Badge>
+        );
       case "failed":
         return <Badge className="bg-red-100 text-red-800">فاشل</Badge>;
       default:
@@ -129,7 +124,7 @@ export default async function AdminProfilePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {userRoles?.roles && getRoleBadge(userRoles.roles.name)}
+          {userRoles?.roles && getRoleBadge(userRoles?.roles?.[0]?.name || "")}
           <Button variant="outline">تعديل الملف الشخصي</Button>
         </div>
       </div>
@@ -150,11 +145,15 @@ export default async function AdminProfilePage() {
             {/* إجمالي الإيرادات */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  إجمالي الإيرادات
+                </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{totalRevenue.toLocaleString()} جنيه مصري</div>
+                <div className="text-2xl font-bold">
+                  {totalRevenue.toLocaleString()} جنيه مصري
+                </div>
                 <p className="text-xs text-muted-foreground">
                   +20% من الشهر الماضي
                 </p>
@@ -164,7 +163,9 @@ export default async function AdminProfilePage() {
             {/* إجمالي المبيعات */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">إجمالي المبيعات</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  إجمالي المبيعات
+                </CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -178,14 +179,14 @@ export default async function AdminProfilePage() {
             {/* المستخدمين */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">المستخدمين</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  المستخدمين
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalUsers}</div>
-                <p className="text-xs text-muted-foreground">
-                  +4 مستخدمين جدد
-                </p>
+                <p className="text-xs text-muted-foreground">+4 مستخدمين جدد</p>
               </CardContent>
             </Card>
 
@@ -214,7 +215,10 @@ export default async function AdminProfilePage() {
               <CardContent>
                 <div className="space-y-4">
                   {recentPurchases?.map((purchase) => (
-                    <div key={purchase.id} className="flex items-center justify-between border-b pb-3">
+                    <div
+                      key={purchase.id}
+                      className="flex items-center justify-between border-b pb-3"
+                    >
                       <div className="space-y-1">
                         <p className="font-medium">{purchase.user_email}</p>
                         <p className="text-sm text-gray-500">
@@ -224,13 +228,17 @@ export default async function AdminProfilePage() {
                       <div className="flex items-center gap-2">
                         {getStatusBadge(purchase.status || "pending")}
                         <span className="text-xs text-gray-500">
-                          {new Date(purchase.purchased_at || "").toLocaleDateString("ar-EG")}
+                          {new Date(
+                            purchase.purchased_at || ""
+                          ).toLocaleDateString("ar-EG")}
                         </span>
                       </div>
                     </div>
                   ))}
                   {!recentPurchases?.length && (
-                    <p className="text-center text-gray-500 py-4">لا توجد مبيعات حديثة</p>
+                    <p className="text-center text-gray-500 py-4">
+                      لا توجد مبيعات حديثة
+                    </p>
                   )}
                 </div>
               </CardContent>
@@ -251,12 +259,14 @@ export default async function AdminProfilePage() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold">{profile?.name || "غير محدد"}</h3>
+                    <h3 className="font-semibold">
+                      {profile?.name || "غير محدد"}
+                    </h3>
                     <p className="text-sm text-gray-500">{user.email}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Shield className="h-3 w-3 text-gray-400" />
                       <span className="text-xs text-gray-500">
-                        {userRoles?.roles?.name || "مستخدم"}
+                        {userRoles?.roles?.[0]?.name || "مستخدم"}
                       </span>
                     </div>
                   </div>
@@ -354,7 +364,9 @@ export default async function AdminProfilePage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4 text-gray-400" />
-                          <span className="font-medium">{purchase.user_email}</span>
+                          <span className="font-medium">
+                            {purchase.user_email}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <BookOpen className="h-3 w-3" />
@@ -363,9 +375,13 @@ export default async function AdminProfilePage() {
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="font-semibold">جنيه مصري{purchase.amount} </p>
+                          <p className="font-semibold">
+                            جنيه مصري{purchase.amount}{" "}
+                          </p>
                           <p className="text-xs text-gray-500">
-                            {new Date(purchase.purchased_at || "").toLocaleDateString("ar-EG")}
+                            {new Date(
+                              purchase.purchased_at || ""
+                            ).toLocaleDateString("ar-EG")}
                           </p>
                         </div>
                         {getStatusBadge(purchase.status || "pending")}
@@ -401,15 +417,15 @@ export default async function AdminProfilePage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">البريد الإلكتروني</label>
-                    <div className="p-2 border rounded-md">
-                      {user.email}
-                    </div>
+                    <label className="text-sm font-medium">
+                      البريد الإلكتروني
+                    </label>
+                    <div className="p-2 border rounded-md">{user.email}</div>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">معرف المستخدم</label>
                   <div className="p-2 border rounded-md font-mono text-sm">
@@ -419,13 +435,15 @@ export default async function AdminProfilePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">تاريخ إنشاء الحساب</label>
+                    <label className="text-sm font-medium">
+                      تاريخ إنشاء الحساب
+                    </label>
                     <div className="p-2 border rounded-md flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
                       {new Date(user.created_at).toLocaleDateString("ar-EG", {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </div>
                   </div>
@@ -433,7 +451,7 @@ export default async function AdminProfilePage() {
                     <label className="text-sm font-medium">الدور</label>
                     <div className="p-2 border rounded-md flex items-center gap-2">
                       <Shield className="h-4 w-4 text-gray-400" />
-                      {userRoles?.roles?.name || "مستخدم"}
+                      {userRoles?.roles?.[0]?.name || "مستخدم"}
                     </div>
                   </div>
                 </div>

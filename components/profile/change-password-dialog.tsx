@@ -20,7 +20,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { KeyRound, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { updateUserPassword } from "@/app/(dashboard)/profile/actions";
 
 const passwordSchema = z.object({
