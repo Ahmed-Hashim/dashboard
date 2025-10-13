@@ -60,12 +60,129 @@ export type Database = {
         }
         Relationships: []
       }
+      before_cta_highlights: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
+          id: number
+          section_id: number | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          section_id?: number | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          section_id?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "before_cta_highlights_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "before_cta_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      before_cta_sections: {
+        Row: {
+          created_at: string | null
+          id: number
+          slug: string
+          title_highlight: string | null
+          title_main: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          slug: string
+          title_highlight?: string | null
+          title_main?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          slug?: string
+          title_highlight?: string | null
+          title_main?: string | null
+        }
+        Relationships: []
+      }
+      benefits: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
+          id: number
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      course_benefits: {
+        Row: {
+          course_id: number | null
+          created_at: string | null
+          description: string | null
+          id: number
+          title: string
+        }
+        Insert: {
+          course_id?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          title: string
+        }
+        Update: {
+          course_id?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_benefits_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_chapters: {
         Row: {
           course_id: number
           created_at: string | null
           description: string | null
+          duration: string | null
           id: number
+          image_url: string | null
           order_index: number | null
           title: string
         }
@@ -73,7 +190,9 @@ export type Database = {
           course_id: number
           created_at?: string | null
           description?: string | null
+          duration?: string | null
           id?: number
+          image_url?: string | null
           order_index?: number | null
           title: string
         }
@@ -81,7 +200,9 @@ export type Database = {
           course_id?: number
           created_at?: string | null
           description?: string | null
+          duration?: string | null
           id?: number
+          image_url?: string | null
           order_index?: number | null
           title?: string
         }
@@ -249,6 +370,426 @@ export type Database = {
           },
         ]
       }
+      faq_items: {
+        Row: {
+          answer: string
+          created_at: string | null
+          id: number
+          order_index: number | null
+          question: string
+          section_id: number | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string | null
+          id?: number
+          order_index?: number | null
+          question: string
+          section_id?: number | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string | null
+          id?: number
+          order_index?: number | null
+          question?: string
+          section_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faq_items_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "faq_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faq_sections: {
+        Row: {
+          created_at: string | null
+          id: number
+          slug: string
+          title_part_1: string | null
+          title_part_2: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          slug: string
+          title_part_1?: string | null
+          title_part_2?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          slug?: string
+          title_part_1?: string | null
+          title_part_2?: string | null
+        }
+        Relationships: []
+      }
+      featured_instructor_sections: {
+        Row: {
+          badge_text: string | null
+          created_at: string | null
+          cta_href: string | null
+          cta_text: string | null
+          id: number
+          instructor_id: number | null
+          main_title: string | null
+          slug: string
+          subtitle: string | null
+        }
+        Insert: {
+          badge_text?: string | null
+          created_at?: string | null
+          cta_href?: string | null
+          cta_text?: string | null
+          id?: number
+          instructor_id?: number | null
+          main_title?: string | null
+          slug: string
+          subtitle?: string | null
+        }
+        Update: {
+          badge_text?: string | null
+          created_at?: string | null
+          cta_href?: string | null
+          cta_text?: string | null
+          id?: number
+          instructor_id?: number | null
+          main_title?: string | null
+          slug?: string
+          subtitle?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_instructor_sections_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      footer_links: {
+        Row: {
+          created_at: string | null
+          footer_id: number | null
+          href: string
+          icon_name: string | null
+          id: number
+          label: string | null
+          link_type: string
+          order_index: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          footer_id?: number | null
+          href: string
+          icon_name?: string | null
+          id?: number
+          label?: string | null
+          link_type: string
+          order_index?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          footer_id?: number | null
+          href?: string
+          icon_name?: string | null
+          id?: number
+          label?: string | null
+          link_type?: string
+          order_index?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "footer_links_footer_id_fkey"
+            columns: ["footer_id"]
+            isOneToOne: false
+            referencedRelation: "footers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      footers: {
+        Row: {
+          brand_description: string | null
+          brand_name: string | null
+          copyright_text: string | null
+          created_at: string | null
+          email: string | null
+          id: number
+          phone_number: string | null
+          quick_links_title: string | null
+          slug: string
+          social_links_title: string | null
+        }
+        Insert: {
+          brand_description?: string | null
+          brand_name?: string | null
+          copyright_text?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: number
+          phone_number?: string | null
+          quick_links_title?: string | null
+          slug: string
+          social_links_title?: string | null
+        }
+        Update: {
+          brand_description?: string | null
+          brand_name?: string | null
+          copyright_text?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: number
+          phone_number?: string | null
+          quick_links_title?: string | null
+          slug?: string
+          social_links_title?: string | null
+        }
+        Relationships: []
+      }
+      header_nav_links: {
+        Row: {
+          created_at: string | null
+          header_id: number | null
+          href: string
+          id: number
+          label: string
+        }
+        Insert: {
+          created_at?: string | null
+          header_id?: number | null
+          href: string
+          id?: number
+          label: string
+        }
+        Update: {
+          created_at?: string | null
+          header_id?: number | null
+          href?: string
+          id?: number
+          label?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "header_nav_links_header_id_fkey"
+            columns: ["header_id"]
+            isOneToOne: false
+            referencedRelation: "headers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      headers: {
+        Row: {
+          created_at: string | null
+          home_href: string | null
+          id: number
+          logo_alt: string | null
+          logo_src: string | null
+          primary_button_href: string | null
+          primary_button_text: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          home_href?: string | null
+          id?: number
+          logo_alt?: string | null
+          logo_src?: string | null
+          primary_button_href?: string | null
+          primary_button_text?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          home_href?: string | null
+          id?: number
+          logo_alt?: string | null
+          logo_src?: string | null
+          primary_button_href?: string | null
+          primary_button_text?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
+      hero_sections: {
+        Row: {
+          created_at: string | null
+          cta_primary_text: string | null
+          cta_secondary_text: string | null
+          description: string | null
+          highlight_text: string | null
+          id: number
+          slug: string
+          title: string | null
+          video_src: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cta_primary_text?: string | null
+          cta_secondary_text?: string | null
+          description?: string | null
+          highlight_text?: string | null
+          id?: number
+          slug: string
+          title?: string | null
+          video_src?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cta_primary_text?: string | null
+          cta_secondary_text?: string | null
+          description?: string | null
+          highlight_text?: string | null
+          id?: number
+          slug?: string
+          title?: string | null
+          video_src?: string | null
+        }
+        Relationships: []
+      }
+      instructor_highlights: {
+        Row: {
+          created_at: string | null
+          id: number
+          instructor_id: number | null
+          order_index: number | null
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          instructor_id?: number | null
+          order_index?: number | null
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          instructor_id?: number | null
+          order_index?: number | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instructor_highlights_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instructors: {
+        Row: {
+          created_at: string | null
+          id: number
+          image_src: string | null
+          linkedin_url: string | null
+          name: string
+          title: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          image_src?: string | null
+          linkedin_url?: string | null
+          name: string
+          title?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          image_src?: string | null
+          linkedin_url?: string | null
+          name?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
+      learn_section_items: {
+        Row: {
+          created_at: string | null
+          icon_name: string | null
+          id: number
+          learn_section_id: number | null
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon_name?: string | null
+          id?: number
+          learn_section_id?: number | null
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          icon_name?: string | null
+          id?: number
+          learn_section_id?: number | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learn_section_items_learn_section_id_fkey"
+            columns: ["learn_section_id"]
+            isOneToOne: false
+            referencedRelation: "learn_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learn_sections: {
+        Row: {
+          created_at: string | null
+          highlighted_word: string | null
+          id: number
+          section_title: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          highlighted_word?: string | null
+          id?: number
+          section_title?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          highlighted_word?: string | null
+          id?: number
+          section_title?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          alt: string
+          created_at: string | null
+          id: number
+          src: string
+        }
+        Insert: {
+          alt: string
+          created_at?: string | null
+          id?: number
+          src: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string | null
+          id?: number
+          src?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -273,6 +814,39 @@ export type Database = {
           id?: string
           name?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      promo_sections: {
+        Row: {
+          created_at: string | null
+          cta_href: string | null
+          cta_text: string | null
+          id: number
+          slug: string
+          title_highlight: string | null
+          title_main: string | null
+          video_src: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cta_href?: string | null
+          cta_text?: string | null
+          id?: number
+          slug: string
+          title_highlight?: string | null
+          title_main?: string | null
+          video_src?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cta_href?: string | null
+          cta_text?: string | null
+          id?: number
+          slug?: string
+          title_highlight?: string | null
+          title_main?: string | null
+          video_src?: string | null
         }
         Relationships: []
       }
@@ -439,6 +1013,30 @@ export type Database = {
           },
         ]
       }
+      testimonials: {
+        Row: {
+          created_at: string | null
+          id: number
+          img_src: string | null
+          name: string
+          text: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          img_src?: string | null
+          name: string
+          text: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          img_src?: string | null
+          name?: string
+          text?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: number
@@ -524,6 +1122,14 @@ export type Database = {
           video_id: string
           video_title: string
         }[]
+      }
+      get_homepage_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_user_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
     }
     Enums: {

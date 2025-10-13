@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -9,17 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
-import { User } from "@supabase/supabase-js";
-import Link from "next/link";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 import { items } from "./Sidebar-Items";
-
-// import {
-//   Collapsible,
-//   CollapsibleContent,
-//   CollapsibleTrigger,
-// } from "./ui/collapsible";
-// Menu items.
 
 export function AppSidebar() {
   return (
@@ -31,42 +26,61 @@ export function AppSidebar() {
               <Image src="/logo.svg" alt="logo" width={120} height={100} />
             </div>
           </SidebarGroupLabel>
+
           <div className="h-px bg-gray-700 my-4 w-full" />
+
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title} className="my-2">
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                if (item.type === "group" && item.children?.length) {
+                  return (
+                    <Collapsible key={item.title} className="group/collapsible">
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton className="flex w-full justify-between items-center my-2">
+                          <div className="flex items-center gap-2">
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </div>
+                          <ChevronDown className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+
+                      <CollapsibleContent>
+                        <SidebarGroupContent>
+                          <SidebarMenu className="ml-4 mt-2 border-l border-gray-700 pl-3">
+                            {item.children.map((child) => (
+                              <SidebarMenuItem key={child.title} className="my-2">
+                                <SidebarMenuButton asChild>
+                                  <Link href={child.url} className="flex items-center gap-2">
+                                    <child.icon />
+                                    <span>{child.title}</span>
+                                  </Link>
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            ))}
+                          </SidebarMenu>
+                        </SidebarGroupContent>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                }
+
+                if (item.type === "single") {
+                  return (
+                    <SidebarMenuItem key={item.title} className="my-2">
+                      <SidebarMenuButton asChild>
+                        <Link href={item.url} className="flex items-center gap-2">
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
+
+                return null;
+              })}
             </SidebarMenu>
-            {/* <Collapsible  className="group/collapsible">
-              <SidebarGroup>
-                <SidebarGroupLabel asChild>
-                  <CollapsibleTrigger >
-                    <span className="text-xl">Help</span>
-                    <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                  </CollapsibleTrigger>
-                </SidebarGroupLabel>
-                <CollapsibleContent>
-                 {items.map((item) => (
-                <SidebarMenuItem key={item.title} className="my-2">
-                  <SidebarMenuButton asChild className="text-xl">
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible> */}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

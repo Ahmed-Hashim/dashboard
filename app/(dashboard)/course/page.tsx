@@ -20,7 +20,7 @@ export type ChapterWithVideos = Chapter & {
 };
 
 export default function ManageChaptersPage() {
-  const COURSE_ID = 1;
+  const COURSE_ID = 2;
 
   const [chapters, setChapters] = useState<ChapterWithVideos[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +45,8 @@ export default function ManageChaptersPage() {
           foreignTable: "course_videos",
           ascending: true,
         });
+        console.log(data);
+        
 
       if (error) {
         console.error("Error fetching course content:", error);
