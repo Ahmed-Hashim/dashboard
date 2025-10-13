@@ -20,7 +20,7 @@ export type ChapterWithVideos = Chapter & {
 };
 
 export default function ManageChaptersPage() {
-  const COURSE_ID = 1;
+  const COURSE_ID = 2;
 
   const [chapters, setChapters] = useState<ChapterWithVideos[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,15 +69,25 @@ export default function ManageChaptersPage() {
     );
   };
   
-  const handleAddVideo = (newVideo: Video) => {
-    setChapters(prev =>
-      prev.map(ch => {
-        if (ch.id === newVideo.chapter_id) {
-          const updatedVideos = [...ch.course_videos, newVideo]
-            .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
-          return { ...ch, course_videos: updatedVideos };
+  // REMOVED: The old handleAddVideo function is no longer needed.
+
+  // NEW: Handler for when videos are assigned to a chapter from AssignVideoDialog
+  const handleVideosAssigned = (assignedVideos: Video[]) => {
+    if (!assignedVideos || assignedVideos.length === 0) return;
+
+    // All assigned videos will have the same chapter_id
+    const chapterId = assignedVideos[0].chapter_id;
+
+    setChapters(prevChapters =>
+      prevChapters.map(chapter => {
+        if (chapter.id === chapterId) {
+          // It's best to refetch the whole chapter's videos to ensure consistency,
+          // but for optimistic UI, we can merge. Let's assume onVideosAssigned
+          // returns the complete, updated list of videos for the chapter.
+          const sortedVideos = [...assignedVideos].sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+          return { ...chapter, course_videos: sortedVideos };
         }
-        return ch;
+        return chapter;
       })
     );
   };
@@ -140,7 +150,7 @@ export default function ManageChaptersPage() {
             onDeleteChapter={setChapterToDelete}
             onEditVideo={(video) => alert(`تنبيه: تعديل الفيديو لم يتم تنفيذه بعد. الفيديو: ${video.title}`)}
             onDeleteVideo={setVideoToDelete}
-            onVideoAdded={handleAddVideo}
+            onVideosAssigned={handleVideosAssigned} // <-- CHANGED: Pass the new handler
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-center border-2 border-dashed rounded-lg p-12 mt-8">

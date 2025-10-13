@@ -47,6 +47,7 @@ export default async function DashboardLayout({
             <main className="flex flex-col flex-1">
               <Navbar user={user}/>
               {children}
+              
               <Toaster richColors />
             </main>
           </SidebarProvider>
