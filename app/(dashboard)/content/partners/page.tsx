@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Link from 'next/link';
 import Image from 'next/image';
 import { getPartners } from '@/app/actions/partnersActions';
@@ -85,14 +84,3 @@ export default async function PartnersPage() {
     </main>
   );
 }
-=======
-import React from 'react'
-
-const page = () => {
-  return (
-    <div>page</div>
-  )
-}
-
-export default page
->>>>>>> 738145104b57bc838a840eb13459b0bc04138157

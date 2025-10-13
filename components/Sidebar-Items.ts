@@ -55,20 +55,16 @@ export const items = [
     type: "group",
     children: [
       {
-<<<<<<< HEAD
         title: "الإعدادات الرئيسية",
         url: "/content/layout-settings",
         icon: Edit,
       },
       {
-=======
->>>>>>> 738145104b57bc838a840eb13459b0bc04138157
         title: "هيرو",
         url: "/content/hero",
         icon: Edit,
       },
       {
-<<<<<<< HEAD
         title: "شركائنا",
         url: "/content/partners",
         icon: ImageIcon,
@@ -101,15 +97,6 @@ export const items = [
       {
         title: "الأسئلة المتكررة",
         url: "/content/fqa",
-=======
-        title: "الصور",
-        url: "/content/images",
-        icon: ImageIcon,
-      },
-      {
-        title: "الفيديوهات",
-        url: "/content/videos",
->>>>>>> 738145104b57bc838a840eb13459b0bc04138157
         icon: Video,
       },
     ]
