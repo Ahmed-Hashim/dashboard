@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { getHeroSection } from "@/app/actions/heroSectionActions";
 // نقوم باستيراد النموذج من الملف المجاور
 import { HeroSectionForm } from "./Form"; 
@@ -27,3 +28,14 @@ export default async function AdminHeroSectionPage() {
     </main>
   );
 }
+=======
+import React from 'react'
+
+const page = () => {
+  return (
+    <div>page</div>
+  )
+}
+
+export default page
+>>>>>>> 738145104b57bc838a840eb13459b0bc04138157

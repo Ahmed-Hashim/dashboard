@@ -45,6 +45,8 @@ export default function ManageChaptersPage() {
           foreignTable: "course_videos",
           ascending: true,
         });
+        console.log(data);
+        
 
       if (error) {
         console.error("Error fetching course content:", error);

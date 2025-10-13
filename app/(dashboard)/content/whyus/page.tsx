@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import { getBenefits } from '@/app/actions/benefitsActions';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -30,3 +31,14 @@ export default async function AdminBenefitsPage() {
     </main>
   );
 }
+=======
+import React from 'react'
+
+const page = () => {
+  return (
+    <div>page</div>
+  )
+}
+
+export default page
+>>>>>>> 738145104b57bc838a840eb13459b0bc04138157
