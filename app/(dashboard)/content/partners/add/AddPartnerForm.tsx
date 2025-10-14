@@ -1,56 +1,58 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
-
+import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react'; // Correct import
+import { createPartner } from '@/app/actions/partnersActions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { TestimonialFormState } from '@/types/types';
-import { createTestimonial } from '@/app/actions/testimonialsActions';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? 'جاري الإضافة...' : 'إضافة رأي'}
+      {pending ? 'جاري الإضافة...' : 'إضافة شريك'}
     </Button>
   );
 }
 
-// NEW: Define a properly typed initial state
-const initialState: TestimonialFormState = {
-    message: undefined,
-    errors: undefined,
-};
-
-export function AddTestimonialForm() {
-  // Use the new initial state. The `state` variable is now fully typed!
-  const [state, formAction] = useFormState(createTestimonial, initialState);
+export function AddPartnerForm() {
+  // Correct hook name
+  const [state, formAction] = useActionState(createPartner, null);
 
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">اسم العميل</Label>
-        <Input id="name" name="name" placeholder="مثال: محمد أحمد" required />
-        {/* Now you get autocompletion and type checking for state.errors.name */}
-        {state?.errors?.name && <p className="text-sm text-red-500">{state.errors.name[0]}</p>}
+        <Label htmlFor="src">رابط شعار الشريك (URL)</Label>
+        <Input
+          id="src"
+          name="src"
+          type="url"
+          placeholder="https://example.com/logo.png"
+          required
+          dir="ltr"
+          className="text-left"
+        />
+        {state?.errors?.src && (
+          <p className="text-sm text-red-500">{state.errors.src[0]}</p>
+        )}
       </div>
-
       <div className="space-y-2">
-        <Label htmlFor="text">نص الشهادة</Label>
-        <Textarea id="text" name="text" placeholder="اكتب شهادة العميل هنا..." required />
-        {state?.errors?.text && <p className="text-sm text-red-500">{state.errors.text[0]}</p>}
+        <Label htmlFor="alt">النص البديل (Alt Text)</Label>
+        <Input
+          id="alt"
+          name="alt"
+          type="text"
+          placeholder="اسم الشريك"
+          required
+        />
+        {state?.errors?.alt && (
+          <p className="text-sm text-red-500">{state.errors.alt[0]}</p>
+        )}
       </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="img_src">رابط صورة العميل (اختياري)</Label>
-        <Input id="img_src" name="img_src" type="url" placeholder="https://example.com/image.jpg" dir="ltr" className="text-left" />
-        {state?.errors?.img_src && <p className="text-sm text-red-500">{state.errors.img_src[0]}</p>}
-      </div>
-
-      {/* And for state.message */}
-      {state?.message && <p className="text-sm text-red-500">{state.message}</p>}
+      {state?.message && (
+        <p className="text-sm text-red-500">{state.message}</p>
+      )}
       <SubmitButton />
     </form>
   );
