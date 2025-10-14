@@ -1,4 +1,4 @@
-📦 cinematic-ai-admin/
+📦 cinematic-ai-content/
 ├── 📁 app/
 │   ├── 📁 (auth)/
 │   │   └── 📁 login/

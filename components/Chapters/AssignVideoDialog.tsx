@@ -1,4 +1,4 @@
-// components/admin/chapters/AssignVideoDialog.tsx
+// components/content/chapters/AssignVideoDialog.tsx
 "use client";
 
 import { useState, useEffect } from "react";

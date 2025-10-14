@@ -51,7 +51,7 @@ export async function updatePartner(formData: FormData) {
     };
   }
 
-  revalidatePath('/admin/partners'); // Refresh the partners list
+  revalidatePath('/content/partners'); // Refresh the partners list
   return {
     message: 'تم تحديث الشريك بنجاح!',
   };

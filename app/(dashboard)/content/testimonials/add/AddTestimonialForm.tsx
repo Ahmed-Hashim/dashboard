@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react'; // 1. Change the import source from 'react-dom' to 'react'
+import { useFormStatus } from 'react-dom'; // `useFormStatus` remains in 'react-dom'
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,22 +19,20 @@ function SubmitButton() {
   );
 }
 
-// NEW: Define a properly typed initial state
 const initialState: TestimonialFormState = {
     message: undefined,
     errors: undefined,
 };
 
 export function AddTestimonialForm() {
-  // Use the new initial state. The `state` variable is now fully typed!
-  const [state, formAction] = useFormState(createTestimonial, initialState);
+  // 2. Rename useFormState to useActionState
+  const [state, formAction] = useActionState(createTestimonial, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">اسم العميل</Label>
         <Input id="name" name="name" placeholder="مثال: محمد أحمد" required />
-        {/* Now you get autocompletion and type checking for state.errors.name */}
         {state?.errors?.name && <p className="text-sm text-red-500">{state.errors.name[0]}</p>}
       </div>
 
@@ -49,7 +48,6 @@ export function AddTestimonialForm() {
         {state?.errors?.img_src && <p className="text-sm text-red-500">{state.errors.img_src[0]}</p>}
       </div>
 
-      {/* And for state.message */}
       {state?.message && <p className="text-sm text-red-500">{state.message}</p>}
       <SubmitButton />
     </form>

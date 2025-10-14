@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { Benefit } from '@/types/types';
 import { createClient } from '@/lib/server';
 
-const ADMIN_PATH = '/admin/benefits';
+const ADMIN_PATH = '/content/benefits';
 
 // --- مخطط Zod للتحقق من صحة البيانات ---
 const benefitSchema = z.object({

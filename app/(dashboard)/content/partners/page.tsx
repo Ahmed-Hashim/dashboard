@@ -31,7 +31,7 @@ export default async function PartnersPage() {
           <p className="text-muted-foreground">إضافة، عرض، وحذف شعارات الشركاء.</p>
         </div>
         <Button asChild>
-          <Link href="/admin/partners/add">إضافة شريك جديد</Link>
+          <Link href="/content/partners/add">إضافة شريك جديد</Link>
         </Button>
       </div>
 

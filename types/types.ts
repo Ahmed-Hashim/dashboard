@@ -181,3 +181,18 @@ export type HeaderWithNavLinks = Header & { header_nav_links: HeaderNavLink[]; }
 export type FooterLink = { id: number; footer_id: number; link_type: 'quick_link' | 'social_link'; label: string | null; href: string; icon_name: string | null; order_index: number | null; };
 export type Footer = { id: number; slug: string; brand_name: string | null; brand_description: string | null; quick_links_title: string | null; social_links_title: string | null; email: string | null; phone_number: string | null; copyright_text: string | null; };
 export type FooterWithLinks = Footer & { footer_links: FooterLink[]; };
+export type Testimonial = {
+  id: number;
+  name: string;
+  text: string;
+  img_src: string | null;
+  created_at: string;
+};
+export type TestimonialFormState = {
+  errors?: {
+    name?: string[];
+    text?: string[];
+    img_src?: string[];
+  };
+  message?: string;
+};

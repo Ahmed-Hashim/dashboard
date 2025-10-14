@@ -1,4 +1,4 @@
-// app/admin/layout-settings/actions.ts
+// app/content/layout-settings/actions.ts
 
 'use server';
 
@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { HeaderWithNavLinks, FooterWithLinks } from '@/types/types';
 import { createClient } from '@/lib/server';
 
-const ADMIN_PATH = '/admin/layout-settings';
+const ADMIN_PATH = '/content/layout-settings';
 const HEADER_ID = 1;
 const FOOTER_ID = 1;
 

@@ -1,14 +1,21 @@
 import {
-  BookOpen,
-  Edit,
-  FileText,
   Home,
-  ImageIcon,
-  Layers,
-  LifeBuoy,
-  Users,
+  BookOpen,
   Video,
+  Users,
+  CreditCard,
+  LifeBuoy,
+  FileText,
+  Settings,
+  ImageIcon,
+  GraduationCap,
+  User,
+  MessageSquare,
+  HelpCircle,
+  Sparkles,
+  Gift,
 } from "lucide-react";
+
 export const items = [
   {
     title: "الرئيسية",
@@ -22,7 +29,6 @@ export const items = [
     icon: BookOpen,
     type: "single",
   },
-  
   {
     title: "الفيديوهات",
     url: "/videos",
@@ -35,11 +41,10 @@ export const items = [
     icon: Users,
     type: "single",
   },
-  
   {
     title: "الحسابات",
     url: "/payments",
-    icon: Layers, // ممكن تختار أي أيقونة مناسبة
+    icon: CreditCard,
     type: "single",
   },
   {
@@ -57,49 +62,53 @@ export const items = [
       {
         title: "الإعدادات الرئيسية",
         url: "/content/layout-settings",
-        icon: Edit,
+        icon: Settings,
       },
       {
         title: "هيرو",
         url: "/content/hero",
-        icon: Edit,
+        icon: ImageIcon,
       },
       {
         title: "شركائنا",
         url: "/content/partners",
-        icon: ImageIcon,
+        icon: Sparkles,
       },
       {
         title: "هتتعلم ايه",
         url: "/content/learn",
-        icon: ImageIcon,
+        icon: GraduationCap,
       },
       {
         title: "المدرب",
         url: "/content/instructor",
-        icon: Video,
+        icon: User,
+      },
+      {
+        title: "الآراء",
+        url: "/content/testimonials",
+        icon: MessageSquare,
       },
       {
         title: "لماذا نحن",
         url: "/content/whyus",
-        icon: Video,
+        icon: HelpCircle,
       },
       {
         title: "الكورس",
         url: "/content/course-details",
-        icon: Video,
+        icon: BookOpen,
       },
       {
         title: "ما سيحصل عليه",
         url: "/content/what-user-get",
-        icon: Video,
+        icon: Gift,
       },
       {
         title: "الأسئلة المتكررة",
         url: "/content/fqa",
-        icon: Video,
+        icon: HelpCircle,
       },
-    ]
+    ],
   },
-
 ];

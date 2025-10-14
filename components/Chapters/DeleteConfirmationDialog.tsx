@@ -1,4 +1,4 @@
-// components/admin/chapters/DeleteConfirmationDialog.tsx
+// components/content/chapters/DeleteConfirmationDialog.tsx
 "use client";
 
 import { supabase } from "@/lib/supabaseClient";

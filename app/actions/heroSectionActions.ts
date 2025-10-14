@@ -68,7 +68,7 @@ export async function updateHeroSection(formData: FormData) {
     };
   }
   
-  revalidatePath('/admin/hero-section');
+  revalidatePath('/content/hero-section');
   
   return {
     message: 'Hero section updated successfully!',

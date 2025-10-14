@@ -7,7 +7,7 @@ import { LearnSectionWithItems } from '@/types/types';
 import { createClient } from '@/lib/server';
 
 
-const ADMIN_PATH = '/admin/learn-section';
+const ADMIN_PATH = '/content/learn-section';
 const SECTION_SLUG = 'ai-course-learn-section'; // هذا هو القسم المحدد الذي نقوم بتعديله
 
 // --- مخططات Zod للتحقق من صحة المدخلات ---

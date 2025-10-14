@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { InstructorWithHighlights } from '@/types/types';
 import { createClient } from '@/lib/server';
 
-const ADMIN_PATH = '/admin/instructor';
+const ADMIN_PATH = '/content/instructor';
 const INSTRUCTOR_ID = 1; // نحن نعمل دائمًا على المدرب رقم 1
 
 // --- مخططات Zod للتحقق من صحة البيانات ---
