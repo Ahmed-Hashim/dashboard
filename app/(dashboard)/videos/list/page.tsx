@@ -15,7 +15,7 @@ type Video = Tables<"course_videos">;
 
 
 export default function VideoLibraryCards() {
-  const COURSE_ID = 1;
+  const COURSE_ID = 2;
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
 

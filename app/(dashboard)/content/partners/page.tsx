@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { DeletePartnerButton } from './DeletePartnerButton';
+import { EditPartnerDialog } from './EditPartnerDialog'; // <-- 1. Import the new component
 
 export default async function PartnersPage() {
   const partners = await getPartners();
@@ -30,7 +31,7 @@ export default async function PartnersPage() {
           <p className="text-muted-foreground">إضافة، عرض، وحذف شعارات الشركاء.</p>
         </div>
         <Button asChild>
-          <Link href="/content/partners/add">إضافة شريك جديد</Link>
+          <Link href="/admin/partners/add">إضافة شريك جديد</Link>
         </Button>
       </div>
 
@@ -66,7 +67,11 @@ export default async function PartnersPage() {
                     </TableCell>
                     <TableCell className="font-medium">{partner.alt}</TableCell>
                     <TableCell>
-                      <DeletePartnerButton id={partner.id} />
+                      {/* 2. Add the component here */}
+                      <div className="flex gap-2">
+                        <EditPartnerDialog partner={partner} />
+                        <DeletePartnerButton id={partner.id} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

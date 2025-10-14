@@ -939,36 +939,6 @@ export type Database = {
         }
         Relationships: []
       }
-      site_content: {
-        Row: {
-          content: string | null
-          id: number
-          media_url: string | null
-          order_index: number | null
-          section: string
-          title: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          content?: string | null
-          id?: number
-          media_url?: string | null
-          order_index?: number | null
-          section: string
-          title?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string | null
-          id?: number
-          media_url?: string | null
-          order_index?: number | null
-          section?: string
-          title?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       support_messages: {
         Row: {
           admin_reply: string | null

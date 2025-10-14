@@ -6,7 +6,7 @@ import { Video } from "@/app/(dashboard)/chapters/page";
 import VideoLibraryCards from "./list/page";
 
 export default function ManageVideosPage() {
-  const COURSE_ID = 1;
+  const COURSE_ID = 2;
   const [, setUnassignedVideos] = useState<Video[]>([]);
  
   

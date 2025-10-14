@@ -21,6 +21,41 @@ export type FormState = {
 } | null;
 
 
+// --- NEW: Update an existing partner ---
+export async function updatePartner(formData: FormData) {
+  const id = formData.get('id');
+  if (!id) {
+    return { message: 'لم يتم العثور على المعرف (ID).' };
+  }
+
+  const validatedFields = partnerSchema.safeParse({
+    src: formData.get('src'),
+    alt: formData.get('alt'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { error } = await supabase
+    .from('partners')
+    .update(validatedFields.data)
+    .eq('id', Number(id));
+
+  if (error) {
+    console.error('Supabase update error:', error);
+    return {
+      message: 'فشل في تحديث الشريك في قاعدة البيانات.',
+    };
+  }
+
+  revalidatePath('/admin/partners'); // Refresh the partners list
+  return {
+    message: 'تم تحديث الشريك بنجاح!',
+  };
+}
 // Fetch all partners (no changes here)
 export async function getPartners() {
   // ... (this function is correct)
