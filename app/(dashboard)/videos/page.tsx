@@ -1,9 +1,10 @@
 "use client";
 
 import {  useState } from "react";
-import { VideoUploader } from "@/components/Videos/VideoUploader";
+
 import { Video } from "@/app/(dashboard)/chapters/page";
 import VideoLibraryCards from "./list/page";
+import VideoUploader from "@/components/Videos/VideoUploader";
 
 export default function ManageVideosPage() {
   const COURSE_ID = 2;
@@ -30,26 +31,7 @@ export default function ManageVideosPage() {
           <div className="lg:col-span-1">
             <VideoUploader
               courseId={COURSE_ID}
-              onUploadSuccess={(data) => {
-                const newVideo: Video = {
-                  id: data.id.toString(),
-                  title: data.title,
-                  course_id: data.courseId,
-                  bunny_video_id: data.bunnyVideoId,
-                  bunny_library_id: data.bunnyLibraryId,
-                  created_at: data.createdAt,
-                  duration: null,
-                  external_url: null,
-                  chapter_id: null,
-                  youtube_id: "",
-                  thumbnail_url: null,
-                  order_index: data.id,
-                  attachment_url: null,
-                  description: null,
-                };
-                 
-                handleUploadSuccess(newVideo);
-              }}
+              
             />
           </div>
 

@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Load your Bunny.net credentials from environment variables
-    const libraryId = process.env.BUNNY_STREAM_LIBRARY_ID;
+    const libraryId = process.env.BUNNY_LIBRARY_ID;
     const tokenKey = process.env.BUNNY_STREAM_API_KEY;
 
     // Check if the environment variables are set

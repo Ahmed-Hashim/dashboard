@@ -33,7 +33,7 @@ export const EditVideoDialog = ({ video, onUpdate }: EditVideoDialogProps) => {
     const updatedData = {
       title,
       description,
-      youtube_id: youtubeId,
+      youtube_id: youtubeId || null,
       chapter_id: chapterId || null,
       thumbnail_url: thumbnailUrl,
       attachment_url: attachmentUrl,
@@ -42,7 +42,7 @@ export const EditVideoDialog = ({ video, onUpdate }: EditVideoDialogProps) => {
     };
     await supabase.from("course_videos").update(updatedData).eq("id", video.id);
     setLoading(false);
-    if (onUpdate) onUpdate(updatedData);
+    if (onUpdate) onUpdate({ ...updatedData, youtube_id: youtubeId || undefined });
   };
 
   return (

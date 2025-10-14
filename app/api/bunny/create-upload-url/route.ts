@@ -9,7 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
-    const libraryId = process.env.BUNNY_STREAM_LIBRARY_ID;
+    const libraryId = process.env.BUNNY_LIBRARY_ID;
     const apiKey = process.env.BUNNY_API_KEY;
 
     if (!libraryId || !apiKey) {

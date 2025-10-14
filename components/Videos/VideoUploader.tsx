@@ -1,147 +1,133 @@
 "use client";
-import { useState, useRef, FormEvent } from "react";
+
+import { useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Loader2, UploadCloud } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { UploadCloud, Video } from "lucide-react";
 
-type Props = {
-  courseId: number;
-  onUploadSuccess: (data: {
-    id: number;
-    title: string;
-    courseId: number;
-    bunnyVideoId: string;
-    bunnyLibraryId: string;
-    createdAt: string;
-  }) => void;
+type UploadFormValues = {
+  title: string;
+  file: FileList;
 };
 
-export function VideoUploader({ courseId, onUploadSuccess }: Props) {
-  const [file, setFile] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+export default function VideoUploader({ courseId }: { courseId: number }) {
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const { register, handleSubmit, reset } = useForm<UploadFormValues>();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) setFile(f);
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!file || !title) return setError("يرجى إدخال العنوان واختيار الفيديو.");
-
-    setIsUploading(true);
-    setUploadProgress(0);
-    setError(null);
-
+  const onSubmit = async (values: UploadFormValues) => {
     try {
-      // Step 1️⃣: Create Bunny upload URL
-      const { data: bunny } = await axios.post(
-        "/api/videos/create-upload-url",
-        { title }
-      );
-      if (!bunny.uploadUrl || !bunny.guid)
-        throw new Error("لم يتم إنشاء رابط الرفع.");
+      const file = values.file?.[0];
+      const title = values.title?.trim();
 
-      // Step 3️⃣: Save record to Supabase
-      const { data: saved } = await axios.post("/api/videos/save", {
+      if (!file || !title) {
+        toast.error("Please enter a title and select a file.");
+        return;
+      }
+
+      setUploading(true);
+      setProgress(0);
+
+      // 🧠 1. Create Bunny video entry
+      const { data: createData } = await axios.post("/api/bunny/create", {
+        title,
+      });
+      const { uploadUrl, guid, libraryId } = createData;
+
+      // 🧠 2. Upload file to Bunny video endpoint
+      await axios.put(uploadUrl, file, {
+        headers: { "Content-Type": "application/octet-stream",
+          "AccessKey": process.env.NEXT_PUBLIC_BUNNY_API_KEY || "",
+         },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            setProgress(percent);
+          }
+        },
+      });
+      console.log("Upload Response:", createData);
+      
+      // 🧠 3. Save metadata to Supabase
+      await axios.post("/api/bunny/save", {
         title,
         courseId,
-        bunnyLibraryId: bunny.libraryId,
-        bunnyVideoId: bunny.guid,
+        bunnyLibraryId: libraryId,
+        bunnyVideoId: guid,
+        thumbnailUrl: `${process.env.NEXT_PUBLIC_BUNNY_VIDEO_CDN}/${guid}/thumbnail.jpg`,
       });
 
-      onUploadSuccess(saved);
-      setTitle("");
-      setFile(null);
-      if (fileRef.current) fileRef.current.value = "";
+      toast.success("Video uploaded successfully!");
+      reset();
     } catch (err: unknown) {
-      console.error("Upload error:", err);
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.error ||
-            err.message ||
-            "حدث خطأ أثناء رفع الفيديو."
-        );
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("حدث خطأ أثناء رفع الفيديو.");
-      }
+      console.error(
+        "Upload Error:",
+        (err as { response?: { data?: unknown }; message?: string }).response
+          ?.data || (err as { message?: string }).message
+      );
+
+      toast.error("Upload failed. Check console for details.");
     } finally {
-      setIsUploading(false);
+      setUploading(false);
+      setProgress(0);
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>رفع فيديو جديد</CardTitle>
-        <CardDescription>ارفع الفيديو مباشرة إلى Bunny CDN</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div>
-            <Label className="py-4">عنوان الفيديو</Label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={isUploading}
-            />
-          </div>
+     <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-4 p-6 bg-card rounded-2xl shadow-md border max-w-lg mx-auto"
+    >
+      <h2 className="text-lg font-semibold text-center flex items-center justify-center gap-2">
+        <Video className="w-5 h-5 text-primary" />
+        رفع فيديو جديد
+      </h2>
 
-          <div>
-            <Label className="py-4">ملف الفيديو</Label>
-            <Input
-              type="file"
-              accept="video/*"
-              ref={fileRef}
-              onChange={handleFileChange}
-              disabled={isUploading}
-            />
-            {file && <p className="text-sm mt-2">{file.name}</p>}
-          </div>
+      <div>
+        <label className="text-sm font-medium mb-2 block">عنوان الفيديو</label>
+        <Input
+          placeholder="اكتب عنوان الفيديو..."
+          {...register("title", { required: true })}
+        />
+      </div>
 
-          {isUploading && (
-            <>
-              <Progress value={uploadProgress} />
-              <p className="text-sm text-center">{uploadProgress}%</p>
-            </>
-          )}
+      <div>
+        <label className="text-sm font-medium mb-2 block">
+          اختر ملف الفيديو
+        </label>
+        <Input
+          type="file"
+          accept="video/*"
+          {...register("file", { required: true })}
+        />
+      </div>
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
+      {uploading && (
+        <div className="space-y-2">
+          <Progress value={progress} />
+          <p className="text-sm text-center text-muted-foreground">
+            {progress}%
+          </p>
+        </div>
+      )}
 
-        <CardFooter className="flex justify-center py-4 items-center">
-          <Button type="submit" className="w-[25%]" disabled={isUploading}>
-            {isUploading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <UploadCloud className="mr-2 h-4 w-4" />
-            )}
-            {isUploading ? "جاري الرفع..." : "رفع الفيديو"}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
+      <Button type="submit" disabled={uploading} className="w-full flex items-center justify-center gap-2">
+        {uploading ? (
+          <>
+            <UploadCloud className="w-4 h-4 animate-pulse" />
+            جاري الرفع...
+          </>
+        ) : (
+          <>
+            <UploadCloud className="w-4 h-4" />
+            رفع الفيديو
+          </>
+        )}
+      </Button>
+    </form>
   );
 }
