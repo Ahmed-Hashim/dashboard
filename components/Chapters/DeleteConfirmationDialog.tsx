@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Chapter, Video } from "@/app/(dashboard)/chapters/page";
+import { toast } from "sonner";
 
 type DeleteConfirmationDialogProps = {
   chapterToDelete: Chapter | null;
@@ -43,16 +44,19 @@ export function DeleteConfirmationDialog({
         alert("فشل حذف الفصل.");
       } else {
         onChapterDeleted(chapterToDelete.id);
+        toast.success("تم حذف الفصل بنجاح.");
       }
     } else if (videoToDelete) {
       const { error } = await supabase
         .from("course_videos")
-        .delete()
+        .update({ chapter_id: null }) // remove from chapter
         .eq("id", videoToDelete.id);
+
       if (error) {
-        alert("فشل حذف الفيديو.");
+        alert("فشل إزالة الفيديو من الفصل.");
       } else {
         onVideoDeleted(videoToDelete.id, videoToDelete.chapter_id);
+        toast.success("تم إزالة الفيديو من الفصل بنجاح.");
       }
     }
     onClose();
@@ -75,7 +79,9 @@ export function DeleteConfirmationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onClose}>إلغاء</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmDelete}>نعم، حذف</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirmDelete}>
+            نعم، حذف
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

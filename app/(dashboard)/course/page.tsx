@@ -27,7 +27,9 @@ export default function ManageChaptersPage() {
   const [error, setError] = useState<string | null>(null);
 
   // حالة لإدارة النوافذ المنبثقة
-  const [chapterToEdit, setChapterToEdit] = useState<ChapterWithVideos | null>(null);
+  const [chapterToEdit, setChapterToEdit] = useState<ChapterWithVideos | null>(
+    null
+  );
   const [chapterToDelete, setChapterToDelete] = useState<Chapter | null>(null);
   const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
 
@@ -45,8 +47,7 @@ export default function ManageChaptersPage() {
           foreignTable: "course_videos",
           ascending: true,
         });
-        console.log(data);
-        
+      console.log(data);
 
       if (error) {
         console.error("Error fetching course content:", error);
@@ -62,15 +63,19 @@ export default function ManageChaptersPage() {
 
   // دوال لتحديث الواجهة بناءً على الأحداث من المكونات الفرعية
   const handleAddChapter = (newChapter: ChapterWithVideos) => {
-    setChapters((prev) => [...prev, newChapter].sort((a,b) => (a.order_index || 0) - (b.order_index || 0)));
+    setChapters((prev) =>
+      [...prev, newChapter].sort(
+        (a, b) => (a.order_index || 0) - (b.order_index || 0)
+      )
+    );
   };
 
   const handleUpdateChapter = (updatedChapter: ChapterWithVideos) => {
-    setChapters(prev => 
-      prev.map(ch => ch.id === updatedChapter.id ? updatedChapter : ch)
+    setChapters((prev) =>
+      prev.map((ch) => (ch.id === updatedChapter.id ? updatedChapter : ch))
     );
   };
-  
+
   // REMOVED: The old handleAddVideo function is no longer needed.
 
   // NEW: Handler for when videos are assigned to a chapter from AssignVideoDialog
@@ -80,13 +85,15 @@ export default function ManageChaptersPage() {
     // All assigned videos will have the same chapter_id
     const chapterId = assignedVideos[0].chapter_id;
 
-    setChapters(prevChapters =>
-      prevChapters.map(chapter => {
+    setChapters((prevChapters) =>
+      prevChapters.map((chapter) => {
         if (chapter.id === chapterId) {
           // It's best to refetch the whole chapter's videos to ensure consistency,
           // but for optimistic UI, we can merge. Let's assume onVideosAssigned
           // returns the complete, updated list of videos for the chapter.
-          const sortedVideos = [...assignedVideos].sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+          const sortedVideos = [...assignedVideos].sort(
+            (a, b) => (a.order_index || 0) - (b.order_index || 0)
+          );
           return { ...chapter, course_videos: sortedVideos };
         }
         return chapter;
@@ -97,7 +104,7 @@ export default function ManageChaptersPage() {
   const handleDeleteChapter = (chapterId: number) => {
     setChapters((prev) => prev.filter((ch) => ch.id !== chapterId));
   };
-  
+
   const handleDeleteVideo = (videoId: string, chapterId: number | null) => {
     setChapters((prev) =>
       prev.map((ch) => {
@@ -111,7 +118,7 @@ export default function ManageChaptersPage() {
       })
     );
   };
-  
+
   // عرض حالات الواجهة المختلفة
   if (loading) {
     return (
@@ -150,14 +157,15 @@ export default function ManageChaptersPage() {
             courseId={COURSE_ID}
             onEditChapter={setChapterToEdit}
             onDeleteChapter={setChapterToDelete}
-            onEditVideo={(video) => alert(`تنبيه: تعديل الفيديو لم يتم تنفيذه بعد. الفيديو: ${video.title}`)}
             onDeleteVideo={setVideoToDelete}
             onVideosAssigned={handleVideosAssigned} // <-- CHANGED: Pass the new handler
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-center border-2 border-dashed rounded-lg p-12 mt-8">
             <FolderOpen className="w-16 h-16 text-muted-foreground" />
-            <h2 className="mt-4 text-xl font-semibold">لم يتم إضافة فصول بعد</h2>
+            <h2 className="mt-4 text-xl font-semibold">
+              لم يتم إضافة فصول بعد
+            </h2>
             <p className="mt-2 text-muted-foreground">
               ابدأ ببناء الكورس عن طريق إضافة أول فصل.
             </p>
@@ -171,7 +179,7 @@ export default function ManageChaptersPage() {
         onClose={() => setChapterToEdit(null)}
         onChapterUpdated={handleUpdateChapter}
       />
-      
+
       {/* نافذة تأكيد الحذف */}
       <DeleteConfirmationDialog
         chapterToDelete={chapterToDelete}

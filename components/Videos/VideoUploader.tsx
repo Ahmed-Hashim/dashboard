@@ -8,13 +8,19 @@ import { Progress } from "@/components/ui/progress";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { UploadCloud, Video } from "lucide-react";
+import { Video as VideoType } from "@/app/(dashboard)/chapters/page";
 
 type UploadFormValues = {
   title: string;
   file: FileList;
 };
 
-export default function VideoUploader({ courseId }: { courseId: number }) {
+type Props = {
+  courseId: number;
+  onUploadSuccess?: (video: VideoType) => void;
+};
+
+export default function VideoUploader({ courseId, onUploadSuccess }: Props) {
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const { register, handleSubmit, reset } = useForm<UploadFormValues>();
@@ -23,7 +29,6 @@ export default function VideoUploader({ courseId }: { courseId: number }) {
     try {
       const file = values.file?.[0];
       const title = values.title?.trim();
-
       if (!file || !title) {
         toast.error("Please enter a title and select a file.");
         return;
@@ -32,28 +37,23 @@ export default function VideoUploader({ courseId }: { courseId: number }) {
       setUploading(true);
       setProgress(0);
 
-      // 🧠 1. Create Bunny video entry
-      const { data: createData } = await axios.post("/api/bunny/create", {
-        title,
-      });
+      // 1️⃣ Create Bunny video entry
+      const { data: createData } = await axios.post("/api/bunny/create", { title });
       const { uploadUrl, guid, libraryId } = createData;
 
-      // 🧠 2. Upload file to Bunny video endpoint
+      // 2️⃣ Upload file to Bunny video endpoint
       await axios.put(uploadUrl, file, {
-        headers: { "Content-Type": "application/octet-stream",
+        headers: {
+          "Content-Type": "application/octet-stream",
           "AccessKey": process.env.NEXT_PUBLIC_BUNNY_API_KEY || "",
-         },
+        },
         onUploadProgress: (event) => {
-          if (event.total) {
-            const percent = Math.round((event.loaded / event.total) * 100);
-            setProgress(percent);
-          }
+          if (event.total) setProgress(Math.round((event.loaded / event.total) * 100));
         },
       });
-      console.log("Upload Response:", createData);
-      
-      // 🧠 3. Save metadata to Supabase
-      await axios.post("/api/bunny/save", {
+
+      // 3️⃣ Save metadata to Supabase
+      const { data: savedVideo } = await axios.post("/api/bunny/save", {
         title,
         courseId,
         bunnyLibraryId: libraryId,
@@ -61,15 +61,30 @@ export default function VideoUploader({ courseId }: { courseId: number }) {
         thumbnailUrl: `${process.env.NEXT_PUBLIC_BUNNY_VIDEO_CDN}/${guid}/thumbnail.jpg`,
       });
 
+      // 4️⃣ Add the new video to the parent list instantly
+      const newVideo: VideoType = {
+        id: savedVideo.id, // make sure your save API returns the id
+        course_id: courseId,
+        title,
+        description: "",
+        bunny_video_id: guid,
+        thumbnail_url: `${process.env.NEXT_PUBLIC_BUNNY_VIDEO_CDN}/${guid}/thumbnail.jpg`,
+        created_at: new Date().toISOString(),
+        attachment_url: null,
+        bunny_library_id: null,
+        chapter_id: null,
+        duration: null,
+        external_url: null,
+        order_index: null,
+        youtube_id: ""
+      };
+
+      onUploadSuccess?.(newVideo);
+
       toast.success("Video uploaded successfully!");
       reset();
     } catch (err: unknown) {
-      console.error(
-        "Upload Error:",
-        (err as { response?: { data?: unknown }; message?: string }).response
-          ?.data || (err as { message?: string }).message
-      );
-
+      console.error("Upload Error:", err);
       toast.error("Upload failed. Check console for details.");
     } finally {
       setUploading(false);
@@ -78,53 +93,36 @@ export default function VideoUploader({ courseId }: { courseId: number }) {
   };
 
   return (
-     <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 p-6 bg-card rounded-2xl shadow-md border max-w-lg mx-auto"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-6 bg-card rounded-2xl shadow-md border max-w-lg mx-auto">
       <h2 className="text-lg font-semibold text-center flex items-center justify-center gap-2">
-        <Video className="w-5 h-5 text-primary" />
-        رفع فيديو جديد
+        <Video className="w-5 h-5 text-primary" /> رفع فيديو جديد
       </h2>
 
       <div>
         <label className="text-sm font-medium mb-2 block">عنوان الفيديو</label>
-        <Input
-          placeholder="اكتب عنوان الفيديو..."
-          {...register("title", { required: true })}
-        />
+        <Input placeholder="اكتب عنوان الفيديو..." {...register("title", { required: true })} />
       </div>
 
       <div>
-        <label className="text-sm font-medium mb-2 block">
-          اختر ملف الفيديو
-        </label>
-        <Input
-          type="file"
-          accept="video/*"
-          {...register("file", { required: true })}
-        />
+        <label className="text-sm font-medium mb-2 block">اختر ملف الفيديو</label>
+        <Input type="file" accept="video/*" {...register("file", { required: true })} />
       </div>
 
       {uploading && (
         <div className="space-y-2">
           <Progress value={progress} />
-          <p className="text-sm text-center text-muted-foreground">
-            {progress}%
-          </p>
+          <p className="text-sm text-center text-muted-foreground">{progress}%</p>
         </div>
       )}
 
       <Button type="submit" disabled={uploading} className="w-full flex items-center justify-center gap-2">
         {uploading ? (
           <>
-            <UploadCloud className="w-4 h-4 animate-pulse" />
-            جاري الرفع...
+            <UploadCloud className="w-4 h-4 animate-pulse" /> جاري الرفع...
           </>
         ) : (
           <>
-            <UploadCloud className="w-4 h-4" />
-            رفع الفيديو
+            <UploadCloud className="w-4 h-4" /> رفع الفيديو
           </>
         )}
       </Button>

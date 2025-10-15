@@ -27,7 +27,9 @@ export default function ManageChaptersPage() {
   const [error, setError] = useState<string | null>(null);
 
   // حالة لإدارة النوافذ المنبثقة
-  const [chapterToEdit, setChapterToEdit] = useState<ChapterWithVideos | null>(null);
+  const [chapterToEdit, setChapterToEdit] = useState<ChapterWithVideos | null>(
+    null
+  );
   const [chapterToDelete, setChapterToDelete] = useState<Chapter | null>(null);
   const [videoToDelete, setVideoToDelete] = useState<Video | null>(null);
 
@@ -60,15 +62,19 @@ export default function ManageChaptersPage() {
 
   // دوال لتحديث الواجهة بناءً على الأحداث من المكونات الفرعية
   const handleAddChapter = (newChapter: ChapterWithVideos) => {
-    setChapters((prev) => [...prev, newChapter].sort((a,b) => (a.order_index || 0) - (b.order_index || 0)));
+    setChapters((prev) =>
+      [...prev, newChapter].sort(
+        (a, b) => (a.order_index || 0) - (b.order_index || 0)
+      )
+    );
   };
 
   const handleUpdateChapter = (updatedChapter: ChapterWithVideos) => {
-    setChapters(prev => 
-      prev.map(ch => ch.id === updatedChapter.id ? updatedChapter : ch)
+    setChapters((prev) =>
+      prev.map((ch) => (ch.id === updatedChapter.id ? updatedChapter : ch))
     );
   };
-  
+
   // -- الدالة المفقودة التي يجب إضافتها --
   const handleVideosAssigned = (assignedVideos: Video[]) => {
     if (assignedVideos.length === 0) return;
@@ -76,12 +82,13 @@ export default function ManageChaptersPage() {
     // الحصول على chapter_id من أول فيديو تم ربطه (سيكون هو نفسه للجميع)
     const chapterId = assignedVideos[0].chapter_id;
 
-    setChapters(prev =>
-      prev.map(ch => {
+    setChapters((prev) =>
+      prev.map((ch) => {
         if (ch.id === chapterId) {
           // دمج الفيديوهات الجديدة مع القديمة وترتيب القائمة
-          const updatedVideos = [...ch.course_videos, ...assignedVideos]
-            .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+          const updatedVideos = [...ch.course_videos, ...assignedVideos].sort(
+            (a, b) => (a.order_index || 0) - (b.order_index || 0)
+          );
           return { ...ch, course_videos: updatedVideos };
         }
         return ch;
@@ -92,7 +99,7 @@ export default function ManageChaptersPage() {
   const handleDeleteChapter = (chapterId: number) => {
     setChapters((prev) => prev.filter((ch) => ch.id !== chapterId));
   };
-  
+
   const handleDeleteVideo = (videoId: string, chapterId: number | null) => {
     setChapters((prev) =>
       prev.map((ch) => {
@@ -106,7 +113,7 @@ export default function ManageChaptersPage() {
       })
     );
   };
-  
+
   // عرض حالات الواجهة المختلفة
   if (loading) {
     return (
@@ -148,13 +155,14 @@ export default function ManageChaptersPage() {
             // ------------------------------------
             onEditChapter={setChapterToEdit}
             onDeleteChapter={setChapterToDelete}
-            onEditVideo={(video) => alert(`تنبيه: تعديل الفيديو لم يتم تنفيذه بعد. الفيديو: ${video.title}`)}
             onDeleteVideo={setVideoToDelete}
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-center border-2 border-dashed rounded-lg p-12 mt-8">
             <FolderOpen className="w-16 h-16 text-muted-foreground" />
-            <h2 className="mt-4 text-xl font-semibold">لم يتم إضافة فصول بعد</h2>
+            <h2 className="mt-4 text-xl font-semibold">
+              لم يتم إضافة فصول بعد
+            </h2>
             <p className="mt-2 text-muted-foreground">
               ابدأ ببناء الكورس عن طريق إضافة أول فصل.
             </p>
@@ -168,7 +176,7 @@ export default function ManageChaptersPage() {
         onClose={() => setChapterToEdit(null)}
         onChapterUpdated={handleUpdateChapter}
       />
-      
+
       {/* نافذة تأكيد الحذف */}
       <DeleteConfirmationDialog
         chapterToDelete={chapterToDelete}

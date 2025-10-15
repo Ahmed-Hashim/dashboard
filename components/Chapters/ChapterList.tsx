@@ -14,7 +14,7 @@ type ChapterListProps = {
   courseId: number;
   onEditChapter: (chapter: ChapterWithVideos) => void;
   onDeleteChapter: (chapter: Chapter) => void;
-  onEditVideo: (video: Video) => void;
+
   onDeleteVideo: (video: Video) => void;
   onVideosAssigned: (assignedVideos: Video[]) => void;
 };
@@ -24,7 +24,7 @@ export function ChapterList({
   courseId,
   onEditChapter,
   onDeleteChapter,
-  onEditVideo,
+
   onDeleteVideo,
   onVideosAssigned,
 }: ChapterListProps) {
@@ -70,10 +70,8 @@ export function ChapterList({
                     <span className="font-medium">{video.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">الترتيب: {video.order_index}</Badge>
-                    <Button variant="ghost" size="icon" onClick={() => onEditVideo(video)}>
-                      <Pencil className="w-4 h-4" />
-                    </Button>
+                    {/* <Badge variant="outline">الترتيب: {video.order_index}</Badge> */}
+                    
                     <Button variant="ghost" size="icon" onClick={() => onDeleteVideo(video)}>
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>

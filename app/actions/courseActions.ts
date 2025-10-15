@@ -21,6 +21,7 @@ const courseSchema = z.object({
   seo_meta: z.string().transform((str, ctx) => { // تحويل النص إلى JSON
     try { return JSON.parse(str); }
     catch (e) { 
+      console.error('خطأ في تحويل JSON:', e);
       ctx.addIssue({ code: 'custom', message: 'بيانات SEO غير صالحة (JSON).'});
       return z.NEVER;
     }

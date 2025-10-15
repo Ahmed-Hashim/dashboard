@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/server";
-import { Tables } from "@/types/database";
 import {
   Card,
   CardContent,
