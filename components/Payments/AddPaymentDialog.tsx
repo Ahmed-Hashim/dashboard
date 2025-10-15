@@ -168,6 +168,16 @@ export function AddPaymentDialog({ onPaymentAdded }: AddPaymentDialogProps) {
       setIsSubmitting(false);
     }
   };
+// 🔹 خريطة رموز العملات إلى أسمائها بالعربية
+const currencyNames: Record<string, string> = {
+  EGP: "جنيه مصري",
+  USD: "دولار أمريكي",
+  EUR: "يورو",
+  SAR: "ريال سعودي",
+  AED: "درهم إماراتي",
+  KWD: "دينار كويتي",
+  QAR: "ريال قطري",
+};
 
   const resetForm = () => {
     setSelectedUser(null);
@@ -371,13 +381,20 @@ export function AddPaymentDialog({ onPaymentAdded }: AddPaymentDialogProps) {
             <Label htmlFor="currency" className="text-right">
               العملة
             </Label>
-            <Input
-              id="currency"
-              value={currency}
-              disabled
-              onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-              className="col-span-3"
-            />
+            <ShadSelect onValueChange={(v) => setCurrency(v)} value={currency}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="اختر العملة">
+                  {currencyNames[currency] || currency}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
+                {Object.entries(currencyNames).map(([code, name]) => (
+                  <SelectItem key={code} value={code}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </ShadSelect>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">

@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Sparkles,
   Gift,
+  ClipboardList,
 } from "lucide-react";
 
 export const items = [
@@ -39,6 +40,12 @@ export const items = [
     title: "المستخدمين",
     url: "/users",
     icon: Users,
+    type: "single",
+  },
+  {
+    title: "الاشتراكات",
+    url: "/enrolments",
+    icon: ClipboardList,
     type: "single",
   },
   {

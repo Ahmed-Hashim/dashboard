@@ -231,7 +231,7 @@ export type Database = {
           order_index: number | null
           thumbnail_url: string | null
           title: string
-          youtube_id: string
+          youtube_id: string | null
         }
         Insert: {
           attachment_url?: string | null
@@ -247,7 +247,7 @@ export type Database = {
           order_index?: number | null
           thumbnail_url?: string | null
           title: string
-          youtube_id: string
+          youtube_id?: string | null
         }
         Update: {
           attachment_url?: string | null
@@ -263,7 +263,7 @@ export type Database = {
           order_index?: number | null
           thumbnail_url?: string | null
           title?: string
-          youtube_id?: string
+          youtube_id?: string | null
         }
         Relationships: [
           {
@@ -1093,6 +1093,28 @@ export type Database = {
           video_title: string
         }[]
       }
+      get_enrollments_with_details: {
+        Args: {
+          p_course_id?: number
+          p_purchase_status?: Database["public"]["Enums"]["purchase_status"]
+          p_user_id?: string
+        }
+        Returns: {
+          course_description: string
+          course_id: number
+          course_price: number
+          course_title: string
+          enrolled_at: string
+          enrollment_id: string
+          purchase_amount: number
+          purchase_currency: string
+          purchase_id: string
+          purchase_status: Database["public"]["Enums"]["purchase_status"]
+          user_email: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       get_homepage_data: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -1100,6 +1122,10 @@ export type Database = {
       get_user_data: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_user_role: {
+        Args: { p_user_id: string }
+        Returns: string
       }
     }
     Enums: {

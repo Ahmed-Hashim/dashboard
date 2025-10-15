@@ -20,7 +20,7 @@ type EditVideoDialogProps = {
 export const EditVideoDialog = ({ video, onUpdate }: EditVideoDialogProps) => {
   const [title, setTitle] = useState(video.title);
   const [description, setDescription] = useState(video.description ?? "");
-  const [youtubeId, setYoutubeId] = useState(video.youtube_id);
+  const [youtubeId, setYoutubeId] = useState(video.youtube_id ?? "");
   const [chapterId, setChapterId] = useState(video.chapter_id ?? 0);
   const [thumbnailUrl, setThumbnailUrl] = useState(video.thumbnail_url ?? "");
   const [attachmentUrl, setAttachmentUrl] = useState(video.attachment_url ?? "");

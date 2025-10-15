@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Column } from "@/components/GenericTable";
 
-
 export type PurchaseWithDetails = {
   id: string;
   user_id: string;
@@ -41,7 +40,26 @@ export const paymentsColumns: Column<PurchaseWithDetails>[] = [
   {
     key: "amount",
     label: "المبلغ",
-    render: (item) => `${item.amount} ${item.currency || "EGP"}`,
+    render: (item) => {
+      const currencyNames: Record<string, string> = {
+        EGP: "جنيه مصري",
+        USD: "دولار أمريكي",
+        EUR: "يورو",
+        SAR: "ريال سعودي",
+        AED: "درهم إماراتي",
+        KWD: "دينار كويتي",
+        QAR: "ريال قطري",
+      };
+
+      const currency =
+        currencyNames[item.currency || "EGP"] || item.currency || "جنيه مصري";
+
+      const formattedAmount = new Intl.NumberFormat("ar-EG", {
+        minimumFractionDigits: 0,
+      }).format(item.amount || 0);
+
+      return `${formattedAmount} ${currency}`;
+    },
   },
   {
     key: "purchased_at",
@@ -62,11 +80,7 @@ export const paymentsColumns: Column<PurchaseWithDetails>[] = [
     render: (item) =>
       item.invoice_url ? (
         <Button asChild variant="outline" size="sm">
-          <a
-            href={item.invoice_url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={item.invoice_url} target="_blank" rel="noopener noreferrer">
             عرض الفاتورة
           </a>
         </Button>
