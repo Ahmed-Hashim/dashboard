@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { title, courseId, bunnyVideoId , thumbnailUrl } = body;
+    const { title, courseId, bunnyVideoId , thumbnailUrl , duration } = body;
     const bunnyLibraryId=process.env.BUNNY_LIBRARY_ID!;
     
     if (!title || !courseId || !bunnyLibraryId || !bunnyVideoId) {
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
           bunny_library_id: bunnyLibraryId,
           bunny_video_id: bunnyVideoId,
           thumbnail_url: thumbnailUrl,
+          duration: duration,
         },
       ])
       .select()

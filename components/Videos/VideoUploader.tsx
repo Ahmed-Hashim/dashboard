@@ -19,48 +19,74 @@ type Props = {
   courseId: number;
   onUploadSuccess?: (video: VideoType) => void;
 };
+// A helper function to get video duration from a File object
+const getVideoDuration = (file: File): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    // Create a new video element
+    const video = document.createElement('video');
+    video.preload = 'metadata'; // We only need the metadata, not the whole video
 
+    // When the metadata is loaded, get the duration
+    video.onloadedmetadata = function () {
+      // Clean up the object URL to avoid memory leaks
+      window.URL.revokeObjectURL(video.src);
+      resolve(video.duration);
+    };
+
+    // Handle errors
+    video.onerror = function () {
+      reject("Error reading video file.");
+    };
+
+    // Create a URL for the local file and set it as the video source
+    video.src = window.URL.createObjectURL(file);
+  });
+};
 export default function VideoUploader({ courseId, onUploadSuccess }: Props) {
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const { register, handleSubmit, reset } = useForm<UploadFormValues>();
 
   const onSubmit = async (values: UploadFormValues) => {
-    try {
-      const file = values.file?.[0];
-      const title = values.title?.trim();
-      if (!file || !title) {
-        toast.error("Please enter a title and select a file.");
-        return;
-      }
+  try {
+    const file = values.file?.[0];
+    const title = values.title?.trim();
+    if (!file || !title) {
+      toast.error("Please enter a title and select a file.");
+      return;
+    }
 
-      setUploading(true);
-      setProgress(0);
+    setUploading(true);
+    setProgress(0);
 
-      // 1️⃣ Create Bunny video entry
-      const { data: createData } = await axios.post("/api/bunny/create", { title });
-      const { uploadUrl, guid, libraryId } = createData;
+    // ✨ الخطوة الجديدة: الحصول على مدة الفيديو قبل الرفع
+    const durationInSeconds = await getVideoDuration(file);
+    console.log(`Video duration: ${durationInSeconds} seconds`); // يمكنك استخدام هذه القيمة
 
-      // 2️⃣ Upload file to Bunny video endpoint
-      await axios.put(uploadUrl, file, {
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "AccessKey": process.env.NEXT_PUBLIC_BUNNY_API_KEY || "",
-        },
-        onUploadProgress: (event) => {
-          if (event.total) setProgress(Math.round((event.loaded / event.total) * 100));
-        },
-      });
+    // 1️⃣ Create Bunny video entry
+    const { data: createData } = await axios.post("/api/bunny/create", { title });
+    const { uploadUrl, guid, libraryId } = createData;
 
-      // 3️⃣ Save metadata to Supabase
-      const { data: savedVideo } = await axios.post("/api/bunny/save", {
-        title,
-        courseId,
-        bunnyLibraryId: libraryId,
-        bunnyVideoId: guid,
-        thumbnailUrl: `${process.env.NEXT_PUBLIC_BUNNY_VIDEO_CDN}/${guid}/thumbnail.jpg`,
-      });
-
+    // 2️⃣ Upload file to Bunny video endpoint
+    await axios.put(uploadUrl, file, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "AccessKey": process.env.NEXT_PUBLIC_BUNNY_API_KEY || "",
+      },
+      onUploadProgress: (event) => {
+        if (event.total) setProgress(Math.round((event.loaded / event.total) * 100));
+      },
+    });
+      
+    // 3️⃣ Save metadata to Supabase (مع إضافة المدة)
+    const { data: savedVideo } = await axios.post("/api/bunny/save", {
+      title,
+      courseId,
+      bunnyLibraryId: libraryId,
+      bunnyVideoId: guid,
+      thumbnailUrl: `${process.env.NEXT_PUBLIC_BUNNY_VIDEO_CDN}/${guid}/thumbnail.jpg`,
+      duration: Math.round(durationInSeconds), // 👈 إضافة المدة هنا
+    });
       // 4️⃣ Add the new video to the parent list instantly
       const newVideo: VideoType = {
         id: savedVideo.id, // make sure your save API returns the id
