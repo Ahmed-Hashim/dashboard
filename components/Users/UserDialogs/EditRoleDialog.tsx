@@ -13,6 +13,7 @@ import { Edit } from "lucide-react";
 import { useState } from "react";
 import { Tables } from "@/types/database";
 import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
 
 type Role = Tables<"roles">;
 type EditRoleDialogProps = {
@@ -32,26 +33,43 @@ export default function EditRoleDialog({
     currentRole?.id?.toString() ?? null
   );
   const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false); // track dialog open state
 
   const handleSave = async () => {
     setSaving(true);
     try {
       const roleId = selectedRole ? parseInt(selectedRole) : null;
 
-      // delete old role entry if exists, then insert
-      await supabase.from("user_roles").delete().eq("user_id", userId);
+      // Delete old role
+      const { error: delError } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId);
+
+      if (delError) throw delError;
+
+      // Insert new role if selected
       if (roleId) {
-        await supabase.from("user_roles").insert({ user_id: userId, role_id: roleId });
+        const { error: insError } = await supabase
+          .from("user_roles")
+          .insert({ user_id: userId, role_id: roleId });
+
+        if (insError) throw insError;
       }
 
       onUpdated?.(roleId);
+      toast.success("تم تغيير الصلاحيات بنجاح "); // better success toast
+      setOpen(false); // close dialog
+    } catch (error: unknown) {
+      console.error(error);
+      toast.error(`حدث خطأ: ${{ error: (error as Error).message || 'Internal Server Error' } }`);
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" title="تعديل الدور">
           <Edit className="w-4 h-4" />

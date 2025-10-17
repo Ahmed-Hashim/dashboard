@@ -78,6 +78,8 @@ body {
 
   --border: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
+  --bg-popover: oklch(0.97 0.005 285); /* Light popover background */
+  --text-popover: oklch(0.14 0.005 285.823); /* Dark text on light popover */
 }
 
 /*===============================
@@ -102,6 +104,8 @@ body {
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --ring: oklch(0.552 0.016 285.938);
+  --bg-popover: oklch(0.21 0.01 285); /* Dark popover background */
+  --text-popover: oklch(0.985 0 0); /* Light text on dark popover */
 }
 
 /*===============================
@@ -113,5 +117,10 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+   .popover {
+    background-color: var(--bg-popover);
+    color: var(--text-popover);
+    @apply rounded-md shadow-lg p-4;
   }
 }

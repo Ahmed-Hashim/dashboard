@@ -16,7 +16,7 @@ export default function ManageVideosPage() {
         .select("*")
         .eq("course_id", COURSE_ID)
         .order("created_at", { ascending: false });
-
+      
       if (data) setVideos(data);
     };
     fetchVideos();

@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { enrolmentsColumns } from "./columns";
 import GenericTable from "@/components/GenericTable";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 // import { AddEnrollmentDialog } from "@/components/Enrolments/AddEnrollmentDialog";
 
 // Define enrollment type
@@ -89,7 +90,7 @@ export default function EnrollmentsPage() {
             className="max-w-sm"
           />
         </div>
-        <Link href={"/enrolments/add"}>Add</Link>
+        <Button><Link href={"/enrolments/add"}>تسجيل متدرب جديد</Link></Button>
         {/* <AddEnrollmentDialog onEnrollmentAdded={fetchEnrollments} /> */}
       </div>
 

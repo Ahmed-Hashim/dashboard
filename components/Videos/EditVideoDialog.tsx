@@ -73,7 +73,7 @@ export const EditVideoDialog = ({ video, onUpdate }: EditVideoDialogProps) => {
           {/* YouTube ID */}
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-right">YouTube ID</label>
-            <Input value={youtubeId} onChange={(e) => setYoutubeId(e.target.value)} />
+            <Input value={youtubeId} disabled onChange={(e) => setYoutubeId(e.target.value)} />
           </div>
 
           {/* Chapter ID */}
@@ -85,7 +85,7 @@ export const EditVideoDialog = ({ video, onUpdate }: EditVideoDialogProps) => {
           {/* Duration */}
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-right">مدة الفيديو (ثواني)</label>
-            <Input type="number" value={duration} onChange={(e) => setDuration(Number(e.target.value))} />
+            <Input type="number" value={duration} className="muted" disabled onChange={(e) => setDuration(Number(e.target.value))} />
           </div>
 
           {/* Order Index */}

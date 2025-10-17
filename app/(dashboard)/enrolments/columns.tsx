@@ -56,7 +56,7 @@ export const enrolmentsColumns: Column<EnrolmentWithDetails>[] = [
       item.purchase_id ? (
         <Button asChild variant="outline" size="sm">
           <a
-            href={`/purchases/${item.purchase_id}`}
+            href={`/payments/${item.purchase_id}`}
             target="_blank"
             rel="noopener noreferrer"
           >

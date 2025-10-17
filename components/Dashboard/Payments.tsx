@@ -58,7 +58,7 @@ const CardList = () => {
           >
             <div className="w-12 h-12 rounded-sm relative overflow-hidden">
               <Image
-                src={item.user_image || "/placeholder.jpg"}
+                src={item.user_image || "/default-avatar.jpg"}
                 alt={item.course_name || "صورة المستخدم"}
                 fill
                 className="object-cover rounded-full"

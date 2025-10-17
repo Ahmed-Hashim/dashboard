@@ -30,6 +30,7 @@ import EditRoleDialog from "@/components/Users/UserDialogs/EditRoleDialog";
 import DeleteUserDialog from "@/components/Users/UserDialogs/DeleteUserDialog";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 type Profile = Tables<"profiles">;
 type Role = Tables<"roles">;
@@ -50,7 +51,7 @@ export default function UsersPage() {
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<
-    "all" | "admin" | "student" | "sells"
+    "all" | "admin" | "student" | "sells" | "user"
   >("all");
 
   // fetch data
@@ -98,6 +99,8 @@ export default function UsersPage() {
           ? "admin"
           : roleFilter === "student"
           ? "student"
+          : roleFilter === "user"
+          ? "user"
           : "sells";
       // compare with role.name (if available)
       if (!r.role || r.role.name?.toLowerCase() !== wanted.toLowerCase())
@@ -147,7 +150,7 @@ export default function UsersPage() {
           </div>
           <Select
             value={roleFilter}
-            onValueChange={(v) => setRoleFilter(v as "all" | "admin" | "student" | "sells")}
+            onValueChange={(v) => setRoleFilter(v as "all" | "admin" | "student" | "sells" | "user")}
           >
             <SelectTrigger className="w-44">
               <SelectValue placeholder="الكل" />
@@ -157,6 +160,7 @@ export default function UsersPage() {
               <SelectItem value="admin">Admin</SelectItem>
               <SelectItem value="student">Student</SelectItem>
               <SelectItem value="sells">Sells</SelectItem>
+              <SelectItem value="user">User</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -216,6 +220,7 @@ export default function UsersPage() {
             {filtered.map(({ profile, role }) => (
               <TableRow key={profile.id} className="hover:bg-muted/40">
                 <TableCell>
+                  <Link href={`/users/${profile.user_id}`}>
                   <div className="flex items-center gap-3">
                     <Avatar>
                       {profile.avatar_url ? (
@@ -239,6 +244,7 @@ export default function UsersPage() {
                       </div>
                     </div>
                   </div>
+                  </Link>
                 </TableCell>
 
                 <TableCell className="text-right">
