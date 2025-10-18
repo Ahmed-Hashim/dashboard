@@ -3,7 +3,7 @@
 import { StatsCard } from "@/components/StatsCard";
 
 interface Stats {
-  courses: number;
+  unenrolledUsers: number;
   videos: number;
   users: number;
   support: number;
@@ -16,8 +16,8 @@ interface DashboardStatsProps {
 export const DashboardStats = ({ stats }: DashboardStatsProps) => (
   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
     <StatsCard
-      title="عدد الكورسات"
-      value={stats.courses}
+      title="المستخدمين المحتملين"
+      value={stats.unenrolledUsers}
       color="from-indigo-500 to-indigo-600"
     />
     <StatsCard
@@ -26,7 +26,7 @@ export const DashboardStats = ({ stats }: DashboardStatsProps) => (
       color="from-purple-500 to-purple-600"
     />
     <StatsCard
-      title="عدد المستخدمين"
+      title="عدد المشتركين"
       value={stats.users}
       color="from-green-500 to-green-600"
     />

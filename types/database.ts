@@ -368,6 +368,13 @@ export type Database = {
             referencedRelation: "purchases_with_users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "simple_users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       faq_items: {
@@ -793,29 +800,55 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string | null
           email: string | null
           id: string
+          location: string | null
           name: string | null
+          phone: string | null
+          updated_at: string | null
           user_id: string
+          username: string | null
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
+          location?: string | null
           name?: string | null
+          phone?: string | null
+          updated_at?: string | null
           user_id: string
+          username?: string | null
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
+          location?: string | null
           name?: string | null
+          phone?: string | null
+          updated_at?: string | null
           user_id?: string
+          username?: string | null
+          website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "simple_users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       promo_sections: {
         Row: {
@@ -892,7 +925,38 @@ export type Database = {
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "purchases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "simple_users"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      resources: {
+        Row: {
+          created_at: string
+          icon_name: string | null
+          id: number
+          link: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          icon_name?: string | null
+          id?: number
+          link: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          icon_name?: string | null
+          id?: number
+          link?: string
+          title?: string
+        }
+        Relationships: []
       }
       roles: {
         Row: {
@@ -1034,9 +1098,57 @@ export type Database = {
           {
             foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      video_progress: {
+        Row: {
+          created_at: string
+          current_time: number | null
+          id: number
+          is_completed: boolean | null
+          percentage: number | null
+          updated_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_time?: number | null
+          id?: number
+          is_completed?: boolean | null
+          percentage?: number | null
+          updated_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          current_time?: number | null
+          id?: number
+          is_completed?: boolean | null
+          percentage?: number | null
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_progress_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "video_progress_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "course_videos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1055,6 +1167,8 @@ export type Database = {
           status: Database["public"]["Enums"]["purchase_status"] | null
           user_email: string | null
           user_id: string | null
+          user_image: string | null
+          user_name: string | null
         }
         Relationships: [
           {
@@ -1064,7 +1178,29 @@ export type Database = {
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "purchases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "simple_users"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      simple_users: {
+        Row: {
+          email: string | null
+          id: string | null
+        }
+        Insert: {
+          email?: string | null
+          id?: string | null
+        }
+        Update: {
+          email?: string | null
+          id?: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
@@ -1093,6 +1229,45 @@ export type Database = {
           video_title: string
         }[]
       }
+      enroll_user_in_course: {
+        Args: {
+          p_amount?: number
+          p_course_id: number
+          p_currency?: string
+          p_is_paid: boolean
+          p_user_id: string
+        }
+        Returns: string
+      }
+      get_available_users_for_enrollment: {
+        Args: { course_id: number }
+        Returns: {
+          email: string
+          id: string
+        }[]
+      }
+      get_course_chapters_details: {
+        Args: { p_course_id: number }
+        Returns: {
+          benefits: Json
+          chapter_created_at: string
+          chapter_description: string
+          chapter_duration: string
+          chapter_id: number
+          chapter_image_url: string
+          chapter_order_index: number
+          chapter_title: string
+          course_description: string
+          course_id: number
+          course_image_url: string
+          course_instructor: string
+          course_price: number
+          course_published: boolean
+          course_seo_meta: Json
+          course_slug: string
+          course_title: string
+        }[]
+      }
       get_enrollments_with_details: {
         Args: {
           p_course_id?: number
@@ -1119,6 +1294,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_invoice_details: {
+        Args: { p_purchase_id: string }
+        Returns: {
+          amount: number
+          course_title: string
+          currency: string
+          invoice_url: string
+          purchase_id: string
+          purchased_at: string
+          status: string
+          user_email: string
+          user_name: string
+        }[]
+      }
+      get_user_course_dashboard: {
+        Args: { p_course_id: number; p_user_id: string }
+        Returns: Json
+      }
       get_user_data: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -1126,6 +1319,14 @@ export type Database = {
       get_user_role: {
         Args: { p_user_id: string }
         Returns: string
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_user_enrolled: {
+        Args: { p_course_id: number; p_user_id: string }
+        Returns: boolean
       }
     }
     Enums: {

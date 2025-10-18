@@ -232,9 +232,12 @@ export default function UsersPage() {
                           alt={profile.name ?? "avatar"}
                         />
                       ) : (
-                        <span className="text-sm">
-                          {(profile.name ?? profile.email ?? "—").slice(0, 1)}
-                        </span>
+                        <Image
+                          width={50}
+                          height={50}
+                          src={"/default-avatar.jpg"}
+                          alt={profile.name ?? "avatar"}
+                        />
                       )}
                     </Avatar>
                     <div className="text-right">

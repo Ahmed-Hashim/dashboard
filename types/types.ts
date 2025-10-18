@@ -196,3 +196,29 @@ export type TestimonialFormState = {
   };
   message?: string;
 };
+
+// types/types.ts
+export interface EnrollmentData {
+  date: string;
+  students: number;
+}
+
+export interface VideoEngagementData {
+  title: string;
+  views: number;
+}
+
+export interface SupportMessagesData {
+    date: string;
+    messages: number;
+}
+
+// نوع بيانات عمليات الشراء بناءً على الـ View
+export interface Purchase {
+    id: string | null;
+    purchased_at: string | null;
+    amount: number | null;
+    course_title: string | null;
+    user_name: string | null;
+    user_image: string | null;
+}

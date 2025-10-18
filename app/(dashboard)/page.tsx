@@ -1,160 +1,133 @@
+// app/dashboard/page.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { Loader } from "lucide-react"; // أيقونة للتحميل
 
+// مكونات الواجهة - سننشئها في الخطوات التالية
 import { QuickActions } from "@/components/Dashboard/QuickActions";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
-
-import { LoaderSkeleton } from "@/components/LoaderSkeleton";
-import {
-  CompletionVsActiveData,
-  EnrollmentData,
-  ProgressDistributionData,
-  SupportMessagesData,
-  VideoDropOffData,
-  VideoEngagementData,
-} from "@/types/types";
 import { EnrollmentChart } from "@/components/Dashboard/EnrollmentChart";
-import { CompletionVsActiveChart } from "@/components/Dashboard/CompletionVsActiveChart";
-import { SupportMessagesChart } from "@/components/Dashboard/SupportMessagesChart";
-import { VideoDropOffChart } from "@/components/Dashboard/VideoDropOffChart";
 import { VideoEngagementChart } from "@/components/Dashboard/VideoEngagementChart";
-import CardList from "@/components/Dashboard/Payments";
+import { SupportMessagesChart } from "@/components/Dashboard/SupportMessagesChart";
+
+// استيراد الأنواع
+import { Purchase } from "@/types/types";
+import PaymentsCard from "@/components/Dashboard/PaymentsCard";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    courses: 0,
+    unenrolledUsers: 0,
     videos: 0,
     users: 0,
     support: 0,
   });
-  const [enrollmentData, setEnrollmentData] = useState<EnrollmentData[]>([]);
-  const [videoData, setVideoData] = useState<VideoEngagementData[]>([]);
-  const [, setProgressData] = useState<ProgressDistributionData[]>(
-    []
-  );
-  const [supportData, setSupportData] = useState<SupportMessagesData[]>([]);
-  const [completionData, setCompletionData] = useState<
-    CompletionVsActiveData[]
-  >([]);
-  const [dropOffData, setDropOffData] = useState<VideoDropOffData[]>([]);
+  const [recentPurchases, setRecentPurchases] = useState<Purchase[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      // هنا ممكن تجيب البيانات من Supabase لكل Chart
-      // مثال وهمي للـ Dashboard
-      setStats({ courses: 12, videos: 50, users: 200, support: 10 });
-      setEnrollmentData([
-        { date: "01/10", students: 10 },
-        { date: "02/10", students: 20 },
-        { date: "03/10", students: 25 },
-      ]);
-      setVideoData([
-        { title: "فيديو 1", views: 50, avgWatchTime: 5 },
-        { title: "فيديو 2", views: 30, avgWatchTime: 3 },
-      ]);
-      setProgressData([
-        { name: "أنهو الكورس", value: 40 },
-        { name: "في منتصف الكورس", value: 30 },
-        { name: "بدأ فقط", value: 30 },
-      ]);
-      setSupportData([
-        { date: "01/10", messages: 2 },
-        { date: "02/10", messages: 5 },
-      ]);
-      setCompletionData([
-        { date: "01/10", completionRate: 30, activeStudents: 50 },
-        { date: "02/10", completionRate: 40, activeStudents: 60 },
-      ]);
-      setDropOffData([
-        { time: 1, watchRate: 90 },
-        { time: 2, watchRate: 70 },
-      ]);
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
+      try {
+        setLoading(true);
+        setError(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+        // Promise.all لجلب كل البيانات بالتوازي لتحسين الأداء
+        const [
+          unenrolledRes, // <-- استبدل coursesCountRes بهذا
+          videosCountRes,
+          enrolledCountRes,
+          supportCountRes,
+          enrollmentRes,
+          recentPurchasesRes,
+        ] = await Promise.all([
+          // 1. جلب الإحصائيات الأساسية
+          supabase.rpc("get_unenrolled_users_count"), 
+          supabase
+            .from("course_videos")
+            .select("*", { count: "exact", head: true }),
+          supabase.from("user_roles").select("id", { count: "exact", head: true }).eq("role_id","3"),
+          supabase
+            .from("support_messages")
+            .select("id", { count: "exact", head: true }).neq("status", "resolved"),
+          supabase.rpc("get_daily_enrollments", { days: 30 }), // دالة تجلب عدد المسجلين يوميًا لآخر 30 يوم
+          supabase
+            .from("purchases_with_users")
+            .select("*")
+            .order("purchased_at", { ascending: false })
+            .limit(5),
+        ]);
 
-      const [
-        coursesCount,
-        videosCount,
-        usersCount,
-        supportCount,
-        
-        supportData,
-      ] = await Promise.all([
-        supabase.from("courses").select("*", { count: "exact", head: true }),
-        supabase.from("videos").select("*", { count: "exact", head: true }),
-        supabase.from("users").select("*", { count: "exact", head: true }),
-        supabase.from("support").select("*", { count: "exact", head: true }),
-        supabase
-          .from("courses")
-          .select("*")
-          .order("views", { ascending: false })
-          .limit(5),
-        supabase
-          .from("support")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(5),
-      ]);
+        // التعامل مع أخطاء كل طلب على حدة
+       if (unenrolledRes.error) throw unenrolledRes.error;
+        if (videosCountRes.error) throw videosCountRes.error;
+        if (enrolledCountRes.error) throw enrolledCountRes.error;
+        if (supportCountRes.error) throw supportCountRes.error;
+        if (enrollmentRes.error) throw enrollmentRes.error;
 
-      setStats({
-        courses: coursesCount.count || 0,
-        videos: videosCount.count || 0,
-        users: usersCount.count || 0,
-        support: supportCount.count || 0,
-      });
+        // تحديث حالة الإحصائيات
+        setStats({
+          unenrolledUsers: unenrolledRes.data ?? 0, // <-- تحديث هنا
+          videos: videosCountRes.count ?? 0,
+          users: enrolledCountRes.count ?? 0,
+          support: supportCountRes.count ?? 0,
+        });
 
-      setSupportData(supportData.data || []);
-      setLoading(false);
+        setRecentPurchases(recentPurchasesRes.data as Purchase[]);
+      } catch (err: unknown) {
+        console.error("Error fetching dashboard data:", err);
+        setError("فشل في تحميل بيانات لوحة التحكم. الرجاء المحاولة مرة أخرى.");
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, []);
 
-  // const handleSendMail = (email: string) => {
-  //   alert(`إرسال بريد إلى ${email} (وظيفة تجريبية)`);
-  // };
-
-  if (loading)
+  if (loading) {
     return (
-      <div className="space-y-6 p-6">
-        <LoaderSkeleton className="h-10 w-32" />
-        <LoaderSkeleton />
-        <LoaderSkeleton />
-        <LoaderSkeleton />
+      <div className="flex justify-center items-center h-screen">
+        <Loader className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8 p-6">
-      <h1 className="text-3xl font-bold">لوحة التحكم</h1>
-      <QuickActions />
+    <div className="space-y-6 p-4 md:p-8 bg-background">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          لوحة التحكم
+        </h1>
+        <QuickActions />
+      </div>
+
       <DashboardStats stats={stats} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <EnrollmentChart data={enrollmentData} />
-        <div className="bg-primary-foreground p-4 rounded-lg">
-          <CardList  />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <EnrollmentChart />
         </div>
+        <PaymentsCard purchases={recentPurchases} />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <VideoEngagementChart data={videoData} />
-        <SupportMessagesChart data={supportData} />
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <CompletionVsActiveChart data={completionData} />
-        <VideoDropOffChart data={dropOffData} />
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-3">
+          <VideoEngagementChart />
+        </div>
+        <div className="lg:col-span-2">
+          <SupportMessagesChart />
+        </div>
       </div>
     </div>
   );
