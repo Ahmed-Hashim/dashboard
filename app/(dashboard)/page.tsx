@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { Loader } from "lucide-react"; // أيقونة للتحميل
 
 // مكونات الواجهة - سننشئها في الخطوات التالية
-import { QuickActions } from "@/components/Dashboard/QuickActions";
+// import { QuickActions } from "@/components/Dashboard/QuickActions";
 import { DashboardStats } from "@/components/Dashboard/DashboardStats";
 import { EnrollmentChart } from "@/components/Dashboard/EnrollmentChart";
 import { VideoEngagementChart } from "@/components/Dashboard/VideoEngagementChart";
@@ -109,7 +109,7 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           لوحة التحكم
         </h1>
-        <QuickActions />
+        {/* <QuickActions /> */}
       </div>
 
       <DashboardStats stats={stats} />
